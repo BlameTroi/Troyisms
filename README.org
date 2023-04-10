@@ -1,0 +1,7 @@
+* Troyisms -- There's the right way, the wrong way, and the Troy Way
+
+Notes, tricks, code snippets, and things others might wish I didn't do.
+
+I don't think in terms of gists, but that's where some of these might belong. A repository works for me.
+
+Nothing too interesting here, and probably some bad ideas. It's all available under the UNLICENSE.
