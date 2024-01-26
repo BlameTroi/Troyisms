@@ -1,0 +1,850 @@
+#+title: F90 For Beginners
+#+source: https://www.usm.uni-muenchen.de/people/puls/lessons/intro_general/f90_for_beginners.pdf
+
+* Introduction
+
+This is a short syntax refresher on Fortran 90 that I found on the web from the University of Munich:  [[https://www.usm.uni-muenchen.de/people/puls/lessons/intro_general/f90_for_beginners.pdf][F90 For Beginners]. Thanks to the original authors. This is a good framework to build on for my use.
+
+I've reformatted the text into org mode for my own reference, annotation, and updating to current usage.
+
+As it's now 2024 and the Fortran 2023 standard is released, I expect to have to update this to use F95, maybe 2003? My last serious Fortran was on an IBM 360 in 1978, but I know it wasn't FORTRAN 77. I've got a lot of catching up to do.
+
+** Basic Syntax
+
+Fortran is a line oriented language. Comments begin with an exclamation point or bang and extend to the end of the line. Statements are separated by either the end of the line or a semicolon. A physical line is limited to 132 characters. Lines can be continued with an ampersand.
+
+#+begin_src f90
+
+  ! code all on one line
+  if (a > 5) then; b = 7; else; b = 8; end if
+
+  ! is the same as this more readable code
+  if (a > 5) then
+     b = 7
+  else
+     b = 8
+  end if
+
+  ! and lines can be split as
+  a = 3 * b + &
+      7 * c
+
+#+end_src
+
+Identifier names can be up to 31 characters long. Case is not significant. Valid characters are A..Z, 0..9, and underscore (_). The first character should be a letter.
+
+Declare variables explicitly.
+
+Always begin a program with 'implicit none'. Otherwise the old Fortran 77 convention of names beginning with I-N imply the variable is an integer, and all others are real.
+
+Programs should be named, as in 'program test', and conclude with 'end'.
+
+** Data Types
+
+The elementary or basic data types are:
+
+- integer
+- real
+- complex
+- character
+- logical
+
+Derived or programmer defined types are created by the 'type ... end type' construct. For example:
+
+#+begin_src f90
+
+  type person
+     character (len=20) :: name
+     integer            :: age
+  end type person
+  type(person)      :: myself
+  myself%name = 60
+
+#+end_src
+
+Variable types are refined by attributes that can describe usage, source, scope, and so forth.
+
+- dimension
+- allocatable
+- parameter
+- intent
+- kind
+- len
+- save
+- pointer
+- public
+- private
+- optional
+
+For example:
+
+#+begin_src f90
+
+  integer, parameter :: np = 3
+  real, dimension(np) :: b ! vector of length 3
+  integer :: i
+  do i = 1, np
+     b(i) = sqrt(i)
+  end do
+
+#+end_src
+
+The kind can be used to specify expected precision or other implementation dependent properties of numbers.
+
+There are intrinsic functions to determine if the required precision or range are available.
+
+- selected_real_kind(mantissa_digits, exponent_range)
+- selected_int_kind(digits)
+
+If the required precision is not available the function returns a negative value.
+
+#+begin_src f90
+
+  ! example, use one of sp and dp below and then the declarations follow
+  integer, parameter :: sp = selected_real_kind(6, 37)
+  integer, parameter :: sp = kind(1.)
+  integer, parameter :: dp = selected_real_kind(15,307)
+  integer, parameter :: dp = kind(1.d0)
+  integer, parameter :: qp = selected_real_kind(33,4931)
+  integer, parameter :: i4 = selected_int_kind(9)
+  integer, parameter :: i8 = selected_int_kind(16)
+  real (kind=sp) :: x,y ! or: real (sp) :: x,y
+  real (kind=dp) :: a,b ! ("double precision")
+
+#+end_src
+
+Constants also have type and kind.
+
+- integers: i, 7890, 1_i8
+- real: 1., 1.0, 1.e7, 1.23e-8, 4.356d-15, 1._dp, 2.7e11_sp
+- complex: (0., -1.), (2e-3, 77._dp)
+- character: 'Hello', "I'm a character constant", 'xx''yy' -> "xx'yy"
+- logical: .true., .false.
+- derived: person("fred", 15)
+
+** Expressions
+
+Fortran has the traditional numeric operators and intrinsic functions:
+
+- +
+- -
+- *
+- /
+- ** (power)
+- sin
+- cos
+- tan
+- atan
+- exp
+- log
+- log10
+- sqrt
+
+Operations use the precision of the most precise operand. Question: is this promotion of the lower precision operands? Some examples:
+
+- 1/2 ==> 0
+- 1./2 ==> 0.5000000
+- 1/2. ==> 0.5000000
+- 1/2._dp ==> 0.50000000000000
+- 1+(1.,3) ==> (2.000000,3.000000)
+
+Logical and comparison operators use the original .xx. style and have some symbolic representations as well.
+
+- .and.
+- .or.
+- .not.
+- .eq. or == (good job!)
+- .ne. or /=
+- .gt. or >
+- .ge. or >=
+- .lt. or <
+- .le. or <=
+
+Additional functions for characters include llt, lle, lgt, lge for lexical comparison of characters, char, ichar, trim, and len, and // for concatenation.
+
+** Looping
+
+For counting or fixed length loops, use do/end do. `do var=begin, end, increment` where increment is optional and assumed to be one if omitted. `enddo` is legal but `end do` is preferred. If begin > end and increment is not provided, the loop does not execute.
+
+#+begin_src f90
+
+  ! executes with i of 1, 3, 5, 7, and 9
+  do i = 1, 10, 2
+     print *, i, i**2
+  end do
+
+  ! does not execute
+  do i = 10, 1
+     print *, i, i**2
+  end do
+
+  ! executes for i = 10, 8, 6, 4, 2
+  do i = 10, 1, -2
+     print *, i, i**2
+  end do
+
+  ! executes for i = 10
+  do i = 10, 10
+     print *, i, i**2
+  end do
+
+#+end_src
+
+Use `do while` for non counting conditional loops. For example:
+
+#+begin_src f90
+
+  do while(x .lt. .95)
+     x = 3.8 * x * (1. - x)
+  end do
+
+#+end_src
+
+An infinite loop can be coded with just `do`:
+
+#+begin_src f90
+
+  do
+     print *, 'enter a number, negative to exit'
+     read *, x
+     if (x .lt. 0.) exit
+     print *, 'the square root of ', x, ' is ', sqrt(x)
+  end do
+
+#+end_src
+
+In some situations, an implied do loop can be used. For example:
+
+#+begin_src f90
+
+  print *, (i, i**2, i=1, 100)
+
+#+end_src
+
+`exit` may be used to terminate an infinite loop as above, or it can be used to break out of any other loop.
+
+#+begin_src f90
+
+  real, dimension(327) :: a
+  integer :: i
+  ! ... do something here to populate a with increasing numbers
+  do i = 1, 327
+     if (a(i) .gt. 1.2345) exit
+  end do
+  ! loop control variable is reliable at exit
+  if (i .eq. 327 + 1) then
+     print *, 'index not found'
+     stop
+  else
+     print *, 'index', i, ': value =', a(i)
+  end if
+
+#+end_src
+
+`cycle` starts a new cycle of a loop, and may be named when dealing with nested loops. For example:
+
+#+begin_src f90
+
+  real, dimension(5,5) :: a
+  integer :: i, j
+  call random_number(a)
+  do i = 1, 5
+     print *, (a(i, j), j = 1, 5)
+  enddo
+  outer: do i = 1, 5          ! all matrix rows
+     inner: do j = 1, 5      ! matrix columns, search loop:
+        ! searches for first number > 0.8 in row i
+        if (a(i, j) .gt. 0.8) then
+           print *, 'row', i, ': column', j, ':', a(i, j)
+           cycle outer
+        end if
+     end do inner            ! named do requires named end do
+     print *, 'row ', i, ': nothing found'
+  end do outer
+
+#+end_src
+
+** Conditional Statements
+
+`if then else end if` and variations are available.
+
+#+begin_src f90
+
+  ! a single statement
+  if (x > 0.) x = sqrt(x)
+
+  ! a block style
+  if (x > 0.) then
+     x = sqrt(x)
+     y = y - x
+  end if
+
+  ! if-then-else
+  if (x < 0.) then
+     print *, 'x is negative'
+  else
+     if (x > 0.) then
+        print *, 'x is positive'
+     else
+        print *, 'x must be zero'
+     end if
+  end if
+
+  ! or even better for the above, if-then-else if-...
+  if (x < 0.) then
+     print *, 'x is negative'
+  else if (x > 0.) then
+     print *, 'x is positive'
+  else
+     print *, 'x must be zero'
+  end if
+
+  #+end_src
+
+The `select case` can be used for picking among ordinal values (integer, boolean, and character).
+
+#+begin_src f90
+
+  read *, i
+  select case(i)
+  case(1)
+     print *, 'excellent'
+  case(2, 3)
+     print *, 'meh'
+  case(4:6)
+     print *, 'for shame!'
+  case default
+     print *, 'unpossible'
+  end select
+
+#+end_src
+
+** Input/Output
+
+Terminal oriented with minimal formatting. Older code may use `write(*,*)` or `read(*,*)` but for the terminal or standard input and output, `print *,` and `read *,` are preferred.
+
+#+begin_src f90
+
+  real :: a
+  print *, 'enter a real number'
+  read *, a
+  print *, 'input was ', a
+
+#+end_src
+
+The (*,*) is a shorthand for (unit=*, fmt=*). Formatting will come along soon. Unit numbers appear to be file numbers, but I have to pin that down.
+
+To open a file for writing:
+
+#+begin_src f90
+
+  open (1, file='output')
+  write (1,*) 'hello world'
+  close (1)
+
+#+end_src
+
+Error or event handling on files are specified as keyword operands in the (unit,...) portion of the statement.
+Two options are `end=` for end of file, and `err=` for an error. This example uses line numbers but I hope that isn't the only option.
+
+#+begin_src f90
+
+program read
+  implicit none
+  integer, parameter :: m = 10
+  integer :: i
+  real, dimension (m) :: a
+  real :: t
+  open (77, file='numbers')
+  i = 0
+  do
+     read (77, *, end=200, err=100) t
+     i = i + 1
+     if (i > m) then
+        print *, 'array too small! increase m and recompile!'
+        close (77)
+        stop
+     end if
+     a(i) = t
+  end do
+
+100 continue
+  print *, 'read error in line ', i + 1
+  close (77)
+  stop
+
+200 continue
+  print *, i, ' numbers read'
+  close (77)
+  print *, a(1:i)
+end program read ! program
+
+#+end_src
+
+After some research, the iostat= parameter should be used instead. The status can be checked in a visible and readable way in code.
+
+Reading and writing to character variables uses a concept of an "internal file".
+
+#+begin_src f90
+
+  character (len=20) :: a
+  write(a, *) "Hello, world!"
+
+#+end_src
+
+Classic formatted input/output is still available, but seems discouraged in favor of list-directed input/output. This is fmt=*.
+
+#+begin_src f90
+
+  write (*, 700) 1, 1.23, (7., 8.), 'Hello', .true.
+  write (*, 701)
+  write (*, 702)
+700 format (i5, e12.4e3, 2f8.2, 1x, a3, l7)
+701 format ('12345678901234567890123456789012345678901234567890')
+702 format ('         1         2         3         4         5')
+  write(*,'(i5, e12.4e3, 2f8.2, 1x, a3, l7)') 1, 1.23, (7.,8.), 'Hello', .true.
+
+#+end_src
+
+Produces:
+#+begin_example
+    1 0.1230E+001    7.00    8.00 Hel      T
+12345678901234567890123456789012345678901234567890
+         1         2         3         4         5
+    1 0.1230E+001    7.00    8.00 Hel      T
+#+end_example
+
+Format definitions can be a separate labeled statement, a character constant, or a character variable. Parenthesis are part of the format specification in this form. These are all equivalent:
+
+#+begin_src f90
+
+  real :: x
+  character (len=8) :: a
+
+  write (*, 123) x
+123 format (es10.2)
+
+  write(*, '(es10.2)') x
+
+  a = '(es10.2)'
+  write (*, a) x
+
+#+end_src
+
+Format descriptors can be used to format output allowing for leading blanks (or right alignment if you prefer), different number base, precision, and to select between exponential, scientific, and engineering floating point conventions.
+
+- integers
+  - i decimal
+  - b binary
+  - o octal
+  - z hexadecimal
+- real
+  - d
+  - e exponential (0.nnnnnnexx)
+  - f
+  - g
+  - es exponential using scientific convention (n.nnnnnexx)
+  - en exponential using engineering convention (powers of 10 by orders of magnitude, 12.378e03)
+- logical
+  - l (ell) produces T or F for .true. or .false.
+- character
+  - a
+- other
+  - n (number) repeat following n times, as in 3f8.2
+  - x space
+  - / new line
+  - '...' literal text
+  - (...) for grouping
+  - p scale
+
+** Arrays
+
+Arrays (and vectors) have dimensions. In Fortran the default starting subscript is 1. Bravo. Start and end bounds can be specified to override the default.
+
+#+begin_src f90
+
+  real, dimension(2, 2) :: a ! 2x2, (1,1) -> (2,2)
+  real, dimension(3:4, -2:-1) :: q ! also a 2x2, (3,-2) -> (4,-1)
+  integer, parameter :: m=27, n=123
+  real, dimension(n, m) :: b, c
+  real, dimension(m) :: x, y
+
+#+end_src
+
+Intrinsic functions can describe the array (reflection). Referring to the prior definitions:
+
+#+begin_src f90
+
+  shape(b)      !-> 123, 27 (= n,m)
+  size(b)       !-> 3321 (= 123*27)
+  size(b, 1)    !-> 123
+  size(b, 2)    !-> 27
+  lbound(q, 2)  !-> -2
+  ubound(q, 1)  !-> 4
+
+#+end_src
+
+Array constructors provide a constant or initialization of an array:
+
+#+begin_src f90
+
+  x = (/ 1., 2., 3., 4., 5. /)
+  y = (/ (0.1*i, i=1, m) /)     ! -> 0.1 0.2 0.3 0.4 0.5 ...
+
+#+end_src
+
+This technique only works for single dimensional arrays. It is possible to `reshape` an array, but be aware that in Fortran the first index cycles first. A Fortran two dimensional array is not laid out as it would be in C, where each row (or first index) can be viewed as holding another array.
+
+This is column major order. Fortran and Julia store arrays in column major order, while C and Pascal store them in row major order.
+
+#+begin_src f90
+
+  a = reshape( (/ 1., 2., 3., 4. /), (/ 2, 2 /) )
+
+#+end_src
+
+Before the reshape, the elements are a(1) = 1., a(2) = 2., a(3) = 3., a(4) = 4., while after the reshape the elements are a(1,1) = 1., a(2,1) = 2., a(1,2) = 3., a(2,2) = 4.!
+
+Fortran provides operations for complete arrays, removing the need to write code to iterate over elements in many situations.
+
+#+begin_src f90
+
+  real, dimension(n,m) :: b, c
+  b = sin(c)
+  ! is much better than
+  real, dimension(n, m) :: b, c
+  integer :: i, j
+  do i = 1, n
+     do j = 1, m
+        b(i, j) = sin(c(i, j))
+     end do
+  end do
+
+#+end_src
+
+Similarly, you can operate on slices or sections of arrays if they are the same shape.
+
+#+begin_src f90
+
+  real, dimension(10) :: u, v
+  real, dimension(5, 4) :: w
+  u(2:10, 2) = sin(w(:,1))
+  v(1:3) = 5 ! or v(:3) = 5
+
+#+end_src
+
+So u(i:j:k) means those elements of u starting from index i until index j, but only every k-th element. k is optional and defaults to 1. Omitting i or j implies the lower or upper bound.
+
+Where blocks allow selection or filtering by cell contents (e.g., avoid division by 0):
+
+#+begin_src f90
+
+  where (x == 0)
+     y = 1.
+  else where
+     y = sin(x) / x
+  end where
+
+#+end_src
+
+Array level operations and do loop variations have different semantics. Array level operations evaluate the entire right side of the expression. The following are not equivalent:
+
+#+begin_src f90
+
+  do i = 2, m
+     x(i) = x(i) + x(i - 1)
+  end do
+
+  ! versus
+  x(2:m) = x(2:m) + x(1:m-1)
+
+#+end_src
+
+** Subroutines and Functions
+
+The specific syntax for passing arrays and allowing for non-compile-time constant dimensions isn't completely clear to me yet. The snippets and recommendations from the original document are helpful, but this needs to be clarified.
+
+Here is a simple example.
+
+#+begin_src f90
+
+program main
+  implicit none
+  integer i
+  real :: x, y, sinc
+  do i=0, 80, 2
+     x = i / 10.
+     y = sinc(x)          ! ??? implicit function ???
+     print *, x, y
+  end do
+  call output(0, 80, 2)   ! ??? explicit subroutine ???
+end program main
+
+function sinc(x)
+  implicit none
+  real :: x, sinc
+  if (x .eq. 0.) then
+     ! be careful with comparison to real numbers because of rounding errors
+     ! better: if (abs(x).lt.1.e-16) then
+     sinc = 1.
+  else
+     sinc = sin(x) / x
+  endif
+end function sinc
+
+subroutine output(a, e, s)
+  integer, intent(in) :: a, e, s
+  real :: x, y, sinc
+  integer :: i
+  open(1, file='sinc.data')
+  do i = a, e, s
+     x = i / 10.
+     y = sinc(x)
+     write (1,10) x, y
+  end do
+  close(1)
+10 format(2e14.6)
+end subroutine output
+
+#+end_src
+
+Function sinc above cannot be called with array arguments as it is defined above. Who reserves the storage for arrays? Must the size be fixed at compile time or can it change at run time?
+
+#+begin_src f90
+
+program main
+  implicit none
+  ! ...
+  integer, parameter :: n=100
+  real, dimension(n) :: a, b, c, d
+  call sub(a, b, c, d, n)
+end program main
+
+subroutine sub(u, v, w, x, m)
+  real, dimension(100) :: u            ! constant size
+  real, dimension(m) :: v              ! adjustable size
+  real, dimension(*) :: w              ! assumed size
+  real, dimension(:) :: x              ! assumed shape (needs interface block in caller)
+  real, dimension(100) :: y            ! constant size (local)
+  real, dimension(m) :: z              ! automatic (local)
+  real, dimension(:), allocatable :: t ! deferred-shape (local)
+  ! ...
+  allocate(t(m))
+  ! ...
+  print *, u, v, x, y, z, t            ! assumed size needs explicit indexing
+  print *, w(1:m)                      ! because upper bound is unknown
+  !...
+  deallocate(t)
+end subroutine sub
+
+#+end_src
+
+The original of this recommends using either adjustable size (passed as a parameter) or assumed shape (requires an 'interface block' in the caller, see later). There may be limits on the maximum size of automatic arrays.
+
+Array slices or sections are a special case of 'assumed shape' and also require an interface block. Upcoming.
+
+#+begin_src f90
+
+program main
+  implicit none
+  interface
+     subroutine sub(x)
+       real, dimension(:) :: x
+     end subroutine sub
+  end interface
+  integer, parameter :: n=100
+  real, dimension(n) :: a
+  call sub(a(1:50:3))
+end program main
+
+subroutine sub(x)
+  real, dimension(:) :: x
+  print *, shape(x)
+end subroutine sub
+
+#+end_src
+
+Interface blocks should be collected in a specific module. Modules are described next.
+
+** Modules
+
+While not exactly the same, modules are similar to Pascal units. They are included by the 'use' directive and are best kept in separate source files.
+
+- Declare subroutines, functions, and interface blocks.
+- Global variables can be defined in a module and explicitly exposed on the use directive.
+- Supporting variables and implementation details can be hidden (private) to the module.
+
+Modules can also be used to control precision by the definition of kind-numbers.
+
+#+begin_src f90
+
+module my_type
+  ! Useful trick: precision of following routines can be easily changed
+  ! from single to double precision by alternatively
+  ! commenting/uncommenting the statements defining sp
+  integer, parameter :: ib = selected_int_kind(9) !integer*4
+  integer, parameter :: sp = selected_real_kind(6,37) !real*4 or sp = kind(1.)
+  ! integer, parameter :: sp = selected_real_kind(15,307) !real*8 or dp = kind(1.d0)
+end module my_type
+
+program random
+  use my_type ! use statement(s) must be given before further declarations
+  implicit none
+  integer(ib) :: i
+  real(sp) :: x
+  do i = 1,5
+     call random_number(x)
+     print *,x
+  end do
+end program random
+
+#+end_src
+
+An example of global variables.
+
+#+begin_src f90
+
+module common
+  implicit none
+  real :: x, y=5.
+end module common
+
+program test
+  implicit none
+  call sub1
+  call sub2
+  call sub3
+end program test
+
+subroutine sub1
+  use common, only: x         ! note that common.y is not visible
+  implicit none
+  real :: y
+  x = 3.
+  y = 1.
+  print *, x, y
+end subroutine sub1
+
+subroutine sub2
+  use common, only: x
+  implicit none
+  print *, x
+  x = 7.
+end subroutine sub2
+
+subroutine sub3
+  use common               ! both x and y are visible
+  implicit none
+  print *, x, y
+end subroutine sub3
+
+#+end_src
+
+The following is rather raw and I haven't grokked it yet, but this shows how to better handle assumed shape parameters, among other things. I have done minimal reformatting but a real pass through this to fully understand it and link back to the subroutine section is still needed.
+
+Declaration of subroutine(s) or corresponding interfaces in a module:
+
+No explicit interface block if the subroutine is 'contained' in the module.
+
+#+begin_src f90
+
+module mymod
+  ! no explicit interface block if routine is "contained"
+contains
+  subroutine mysub(x)
+    implicit none
+    real, dimension(:) :: x
+    write(*,*) shape(x)
+  end subroutine mysub
+end module mymod
+
+program main
+  use mymod
+  implicit none
+  integer, parameter :: n=100
+  real, dimension(n) :: a
+  call mysub(a(1:50:3))
+end program main
+
+#+end_src
+
+An interface block is needed if the routine is defined elsewhere.
+
+#+begin_src f90
+
+module mymod
+  interface
+     subroutine mysub(x)
+       implicit none
+       real, dimension(:) :: x
+     end subroutine mysub
+  end interface
+end module mymod
+
+program main
+  use mymod
+  implicit none
+  integer, parameter :: n=100
+  real, dimension(n) :: a
+  call mysub(a(1:50:3))
+end program main
+
+subroutine mysub(x)
+  implicit none
+  real, dimension(:) :: x
+  print *, shape(x)
+end subroutine mysub
+
+#+end_src
+
+And finally an example of using an interface block to overload a function definition to allow for passing scalars or arrays.
+
+#+begin_src f90
+
+module sincm
+  interface sinc
+     module procedure sinca, sincs
+  end interface sinc
+
+contains
+
+  function sinca(x) result(z) ! array
+    implicit none
+    real, dimension(:) :: x
+    real, dimension(size(x)) :: z
+    where(x == 0.)
+       z = 1.
+    elsewhere
+       z = sin(x) / x
+    endwhere
+  end function sinca
+
+  function sincs(x) result(z) ! scalar
+    implicit none
+    real :: x,z
+    if(x == 0.) then
+       z = 1.
+    else
+       z = sin(x) / x
+    endif
+  end function sincs
+end module sincm
+
+program main
+  use sincm
+  implicit none
+  integer, parameter :: m=100
+  real, dimension(m) :: x,y
+  integer :: i
+  x=(/ (0.2*i,i=1,m) /)
+  y=sinc(x) ! array sinc
+  write(*,777) (i,x(i),y(i),i=1,m)
+777 format(i5,2e12.4)
+  print *, sinc(1.23) ! scalar sinc
+end program main
+
+#+end_src
+
+** Build and configuration
+
+To be provided.
