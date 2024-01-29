@@ -1,11 +1,10 @@
 #+title: F90 For Beginners
-#+source: https://www.usm.uni-muenchen.de/people/puls/lessons/intro_general/f90_for_beginners.pdf
+#+source: originally from https://www.usm.uni-muenchen.de/people/puls/lessons/intro_general/f90_for_beginners.pdf and then updated/expanded.
+#+author: original from Tadziu Hoffmann & Joachim Puls (2010), later modifications and additions Troy Brumley.
 
 * Introduction
 
-This is a short syntax refresher on Fortran 90 that I found on the web from the University of Munich:  [[https://www.usm.uni-muenchen.de/people/puls/lessons/intro_general/f90_for_beginners.pdf][F90 For Beginners]]. Thanks to the original authors. This is a good framework to build on for my use.
-
-I've reformatted the text into org mode for my own reference, annotation, and updating to current usage.
+This started from a short syntax refresher on Fortran 90 that I found on the web from the University of Munich:  [[https://www.usm.uni-muenchen.de/people/puls/lessons/intro_general/f90_for_beginners.pdf][F90 For Beginners]]. Thanks to the original authors! I've reformatted the text into org mode for my own reference, annotation. As I learn more Fortran, notes and ideas on usage will end up in here until I've internalized enough that I don't need to refer to this any more.
 
 As it's now 2024 and the Fortran 2023 standard is released, I expect to have to update this to use F95, maybe 2003? My last serious Fortran was on an IBM 360 in 1978, but I know it wasn't FORTRAN 77. I've got a lot of catching up to do.
 
@@ -31,13 +30,13 @@ Fortran is a line oriented language. Comments begin with an exclamation point or
 
 #+end_src
 
-Identifier names can be up to 31 characters long. Case is not significant. Valid characters are A..Z, 0..9, and underscore (_). The first character should be a letter.
+Identifier names can be up to 31 characters long. Case is not significant. Valid characters are A..Z, 0..9, and underscore (_). The first character must be a letter.
 
-Declare variables explicitly.
+*Declare variables explicitly*
 
-Always begin a program with 'implicit none'. Otherwise the old Fortran 77 convention of names beginning with I-N imply the variable is an integer, and all others are real.
+Always begin a program with ~implicit none~. Otherwise the old Fortran 77 convention of names beginning with I-N imply the variable is an integer, while all others are real.
 
-Programs should be named, as in 'program test', and conclude with 'end'.
+Programs should be named, as in ~program test~, and conclude with ~end program test~'.
 
 ** Data Types
 
@@ -49,7 +48,7 @@ The elementary or basic data types are:
 - character
 - logical
 
-Derived or programmer defined types are created by the 'type ... end type' construct. For example:
+Derived or programmer defined types are created by the ~type ... end type~ construct. For example:
 
 #+begin_src f90
 
@@ -66,11 +65,11 @@ Variable types are refined by attributes that can describe usage, source, scope,
 
 - dimension
 - allocatable
-- parameter
-- intent
-- kind
+- parameter (within this scoping unit, this is a constant)
+- intent (in, out, inout for arguments)
+- kind (is this a short or long integer, what precision is required for real numbers)
 - len
-- save
+- save (static)
 - pointer
 - public
 - private
@@ -89,7 +88,7 @@ For example:
 
 #+end_src
 
-The kind can be used to specify expected precision or other implementation dependent properties of numbers.
+The ~kind~ can be used to specify expected precision or other implementation dependent properties of numbers.
 
 There are intrinsic functions to determine if the required precision or range are available.
 
@@ -101,6 +100,7 @@ If the required precision is not available the function returns a negative value
 #+begin_src f90
 
   ! example, use one of sp and dp below and then the declarations follow
+  ! mnemonically sp for single precision, dp for double precision, etc
   integer, parameter :: sp = selected_real_kind(6, 37)
   integer, parameter :: sp = kind(1.)
   integer, parameter :: dp = selected_real_kind(15,307)
@@ -113,7 +113,7 @@ If the required precision is not available the function returns a negative value
 
 #+end_src
 
-Constants also have type and kind.
+Constants also have type and kind. In the context of the preceding block:
 
 - integers: i, 7890, 1_i8
 - real: 1., 1.0, 1.e7, 1.23e-8, 4.356d-15, 1._dp, 2.7e11_sp
@@ -122,7 +122,7 @@ Constants also have type and kind.
 - logical: .true., .false.
 - derived: person("fred", 15)
 
-** Expressions
+** Expression Operators
 
 Fortran has the traditional numeric operators and intrinsic functions:
 
@@ -140,7 +140,7 @@ Fortran has the traditional numeric operators and intrinsic functions:
 - log10
 - sqrt
 
-Operations use the precision of the most precise operand. Question: is this promotion of the lower precision operands? Some examples:
+Operations use the precision of the most precise operand. It's not clear to me yet if or when lower precision operands are promoted, but I don't expect many surprises in my code.
 
 - 1/2 ==> 0
 - 1./2 ==> 0.5000000
@@ -159,12 +159,12 @@ Logical and comparison operators use the original .xx. style and have some symbo
 - .ge. or >=
 - .lt. or <
 - .le. or <=
-
-Additional functions for characters include llt, lle, lgt, lge for lexical comparison of characters, char, ichar, trim, and len, and // for concatenation.
+- .eqv. and .neqv. to compare logical variables
+- .llt., .lle., .lgt., .lge. for lexical comparison of characters
 
 ** Looping
 
-For counting or fixed length loops, use do/end do. `do var=begin, end, increment` where increment is optional and assumed to be one if omitted. `enddo` is legal but `end do` is preferred. If begin > end and increment is not provided, the loop does not execute.
+For counting or fixed length loops, use ~do/end do~. ~do var=begin, end, increment~ where increment is optional and assumed to be one if omitted. ~enddo~ is legal but ~end do~ is preferred. If begin > end and increment is not provided, the loop does not execute.
 
 #+begin_src f90
 
@@ -190,7 +190,7 @@ For counting or fixed length loops, use do/end do. `do var=begin, end, increment
 
 #+end_src
 
-Use `do while` for non counting conditional loops. For example:
+Use ~do while~ for non counting conditional loops. For example:
 
 #+begin_src f90
 
@@ -200,7 +200,7 @@ Use `do while` for non counting conditional loops. For example:
 
 #+end_src
 
-An infinite loop can be coded with just `do`:
+An infinite loop can be coded with just ~do~:
 
 #+begin_src f90
 
@@ -213,7 +213,7 @@ An infinite loop can be coded with just `do`:
 
 #+end_src
 
-In some situations, an implied do loop can be used. For example:
+In some situations, an implied ~do~ can be used. For example:
 
 #+begin_src f90
 
@@ -221,7 +221,7 @@ In some situations, an implied do loop can be used. For example:
 
 #+end_src
 
-`exit` may be used to terminate an infinite loop as above, or it can be used to break out of any other loop.
+~exit~ may be used to terminate an infinite loop as above, or it can be used to break out of any other loop.
 
 #+begin_src f90
 
@@ -241,7 +241,7 @@ In some situations, an implied do loop can be used. For example:
 
 #+end_src
 
-`cycle` starts a new cycle of a loop, and may be named when dealing with nested loops. For example:
+~cycle` starts a new cycle of a loop, and may be named when dealing with nested loops. For example:
 
 #+begin_src f90
 
@@ -264,9 +264,16 @@ In some situations, an implied do loop can be used. For example:
 
 #+end_src
 
+** Statements versus Constructs
+
+Block structuring seems to have come along with the Fortran 77 standard. Some things can be done in one statement or more completely in a block. The logical and arithmetic ~if~ statements from Fortran IV are still available but I believe only the logical form should be used.
+
+- logical ~if~ : =IF (logical expression) <any statement other than DO or IF>= would be useful for ~exit~ or ~cycle~ in loops.
+- arithmetic ~if~ : =IF (numeric expression) <label if negative>,<label if zero>,<label if positive>= should not be used.
+
 ** Conditional Statements
 
-`if then else end if` and variations are available.
+~if then else end if~ and variations are available.
 
 #+begin_src f90
 
@@ -301,7 +308,7 @@ In some situations, an implied do loop can be used. For example:
 
   #+end_src
 
-The `select case` can be used for picking among ordinal values (integer, boolean, and character).
+The ~select case~ can be used for picking among ordinal values (integer, boolean, and character).
 
 #+begin_src f90
 
@@ -321,7 +328,7 @@ The `select case` can be used for picking among ordinal values (integer, boolean
 
 ** Input/Output
 
-Terminal oriented with minimal formatting. Older code may use `write(*,*)` or `read(*,*)` but for the terminal or standard input and output, `print *,` and `read *,` are preferred.
+Terminal oriented with minimal formatting. Older code may use ~write(*,*)` or ~read(*,*)~ but for the terminal or standard input and output, ~print *,~ and ~read *,~ are preferred.
 
 #+begin_src f90
 
@@ -332,7 +339,7 @@ Terminal oriented with minimal formatting. Older code may use `write(*,*)` or `r
 
 #+end_src
 
-The (*,*) is a shorthand for (unit=*, fmt=*). Formatting will come along soon. Unit numbers appear to be file numbers, but I have to pin that down.
+The ~(*,*)~ is a shorthand for ~(unit=*, fmt=*)~. Formatting will come along soon. Unit numbers appear to be file numbers, but I have to pin that down.
 
 To open a file for writing:
 
@@ -345,7 +352,7 @@ To open a file for writing:
 #+end_src
 
 Error or event handling on files are specified as keyword operands in the (unit,...) portion of the statement.
-Two options are `end=` for end of file, and `err=` for an error. This example uses line numbers but I hope that isn't the only option.
+Two options are ~end=~ for end of file, and ~err=~for an error. This example uses line numbers but I hope that isn't the only option.
 
 #+begin_src f90
 
@@ -381,9 +388,9 @@ end program read ! program
 
 #+end_src
 
-After some research, the iostat= parameter should be used instead. The status can be checked in a visible and readable way in code.
+After some research, the ~iostat=~ parameter should be used instead. The status can be checked in a visible and readable way in code. Negative values are end of file, 0 is normal completion, while positive values are an error.
 
-Reading and writing to character variables uses a concept of an "internal file".
+Reading and writing to character variables can use a concept of an "internal file". Character index addressing, slicing, and concatenation are also available. I need to write up a more complete section on character variables.
 
 #+begin_src f90
 
@@ -392,7 +399,7 @@ Reading and writing to character variables uses a concept of an "internal file".
 
 #+end_src
 
-Classic formatted input/output is still available, but seems discouraged in favor of list-directed input/output. This is fmt=*.
+Classic formatted input/output is still available, but seems discouraged in favor of list-directed input/output. This is ~fmt=*~.
 
 #+begin_src f90
 
@@ -435,7 +442,7 @@ Format descriptors can be used to format output allowing for leading blanks (or 
 
 - integers
   - i decimal
-  - b binary
+  - b binary              (BOZ literals are a thing)
   - o octal
   - z hexadecimal
 - real
@@ -459,7 +466,7 @@ Format descriptors can be used to format output allowing for leading blanks (or 
 
 ** Arrays
 
-Arrays (and vectors) have dimensions. In Fortran the default starting subscript is 1. Bravo. Start and end bounds can be specified to override the default.
+Arrays have dimensions. An array can be a vector (one dimension) or matrix (multiple dimensions). Fortran allows up to seven dimensions. In Fortran the default starting subscript is 1. Bravo. Start and end bounds can be specified to override the default.
 
 #+begin_src f90
 
@@ -493,7 +500,7 @@ Array constructors provide a constant or initialization of an array:
 
 #+end_src
 
-This technique only works for single dimensional arrays. It is possible to `reshape` an array, but be aware that in Fortran the first index cycles first. A Fortran two dimensional array is not laid out as it would be in C, where each row (or first index) can be viewed as holding another array.
+This technique only works for single dimensional arrays. It is possible to ~reshape~ an array, but be aware that in Fortran the first index cycles first. A Fortran two dimensional array is not laid out as it would be in C, where each row (or first index) can be viewed as holding another array.
 
 This is column major order. Fortran and Julia store arrays in column major order, while C and Pascal store them in row major order.
 
@@ -503,7 +510,7 @@ This is column major order. Fortran and Julia store arrays in column major order
 
 #+end_src
 
-Before the reshape, the elements are a(1) = 1., a(2) = 2., a(3) = 3., a(4) = 4., while after the reshape the elements are a(1,1) = 1., a(2,1) = 2., a(1,2) = 3., a(2,2) = 4.!
+Before the ~reshape~ the elements are a(1) = 1., a(2) = 2., a(3) = 3., a(4) = 4., while afterwards they are a(1,1) = 1., a(2,1) = 2., a(1,2) = 3., a(2,2) = 4.!
 
 Fortran provides operations for complete arrays, removing the need to write code to iterate over elements in many situations.
 
@@ -608,7 +615,7 @@ end subroutine output
 
 #+end_src
 
-Function sinc above cannot be called with array arguments as it is defined above. Who reserves the storage for arrays? Must the size be fixed at compile time or can it change at run time?
+Function ~sinc~ above cannot be called with array arguments as it is defined above. Who reserves the storage for arrays? Must the size be fixed at compile time or can it change at run time?
 
 #+begin_src f90
 
@@ -639,9 +646,9 @@ end subroutine sub
 
 #+end_src
 
-The original of this recommends using either adjustable size (passed as a parameter) or assumed shape (requires an 'interface block' in the caller, see later). There may be limits on the maximum size of automatic arrays.
+The original of this recommends using either adjustable size (passed as a parameter) or assumed shape (requires an ~interface~ block in the caller, see later). There may be limits on the maximum size of automatic arrays.
 
-Array slices or sections are a special case of 'assumed shape' and also require an interface block. Upcoming.
+Array slices or sections are a special case of 'assumed shape' and also require an ~interface~ block. Upcoming.
 
 #+begin_src f90
 
@@ -664,11 +671,11 @@ end subroutine sub
 
 #+end_src
 
-Interface blocks should be collected in a specific module. Modules are described next.
+Interface blocks should be collected in a specific ~module~. Modules are described next.
 
 ** Modules
 
-While not exactly the same, modules are similar to Pascal units. They are included by the 'use' directive and are best kept in separate source files.
+While not exactly the same, a module is similar to a Pascal unit. They are included by the ~use~ directive and are best kept in separate source files.
 
 - Declare subroutines, functions, and interface blocks.
 - Global variables can be defined in a module and explicitly exposed on the use directive.
@@ -847,4 +854,4 @@ end program main
 
 ** Build and configuration
 
-To be provided.
+To be provided. CMake seems to be common.
