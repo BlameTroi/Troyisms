@@ -92,8 +92,8 @@ The ~kind~ can be used to specify expected precision or other implementation dep
 
 There are intrinsic functions to determine if the required precision or range are available.
 
-- selected_real_kind(mantissa_digits, exponent_range)
-- selected_int_kind(digits)
+- ~selected_real_kind(mantissa_digits, exponent_range)~
+- ~selected_int_kind(digits)~
 
 If the required precision is not available the function returns a negative value.
 
@@ -124,13 +124,14 @@ Constants also have type and kind. In the context of the preceding block:
 
 ** Expression Operators
 
-Fortran has the traditional numeric operators and intrinsic functions:
+Fortran has all the traditional operators and intrinsic functions:
 
 - +
 - -
 - *
 - /
 - ** (power)
+- // (string concatenation)
 - sin
 - cos
 - tan
@@ -567,6 +568,19 @@ Array level operations and do loop variations have different semantics. Array le
 
 #+end_src
 
+** Character Variables
+
+Character variables are fixed length, which I should have no problem adjusting to given my career as an assembly language programmer. In my work so far I see them all padded on the right. Slicing by byte index works but remember those blanks!
+
+#+begin_src f90
+
+character(len=255) :: str
+str = ""
+str = str//"asdf"        ! wrong, str will be "" after this statement
+str = trim(str)//"asdf"  ! right, str will be "asdf" after this statement
+
+#+end_src
+
 ** Subroutines and Functions
 
 The specific syntax for passing arrays and allowing for non-compile-time constant dimensions isn't completely clear to me yet. The snippets and recommendations from the original document are helpful, but this needs to be clarified.
@@ -855,3 +869,26 @@ end program main
 ** Build and configuration
 
 To be provided. CMake seems to be common.
+
+- modules can be done easily enough
+- compile a module gfortran -c -Wall name.f90
+  - produces name.mod, used by compiler to resolve interface
+  - produces name.o, used by linker
+- compile and link main with module gfortran -Wall main.f90 name.o
+- proper locations for modules and objects yet to be determined
+
+** Editing and Tooling
+
+Doom emacs with lsp support and the more current fortls. Projectile is not natural to me yet.
+
+FPM is installed but I haven't really used it yet.
+
+CMake is also on deck.
+
+** Best Practices (I hope)
+
+- Always use ~implicit none~.
+- Use underscore instead of camel or Pascal casing for names.
+- Factor out code into modules when possible.
+- Use FPM.
+- Use CMake.
