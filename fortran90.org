@@ -2,7 +2,7 @@
 #+source: originally from https://www.usm.uni-muenchen.de/people/puls/lessons/intro_general/f90_for_beginners.pdf and then updated/expanded.
 #+author: original from Tadziu Hoffmann & Joachim Puls (2010), later modifications and additions Troy Brumley.
 
-* Introduction
+** Introduction
 
 This started from a short syntax refresher on Fortran 90 that I found on the web from the University of Munich:  [[https://www.usm.uni-muenchen.de/people/puls/lessons/intro_general/f90_for_beginners.pdf][F90 For Beginners]]. Thanks to the original authors! I've reformatted the text into org mode for my own reference, annotation. As I learn more Fortran, notes and ideas on usage will end up in here until I've internalized enough that I don't need to refer to this any more.
 
@@ -10,7 +10,9 @@ As it's now 2024 and the Fortran 2023 standard is released, I expect to have to 
 
 ** Basic Syntax
 
-Fortran is a line oriented language. Comments begin with an exclamation point or bang and extend to the end of the line. Statements are separated by either the end of the line or a semicolon. A physical line is limited to 132 characters. Lines can be continued with an ampersand.
+*** Free form
+
+Modern Fortran is a line oriented language but the old card column restrictions no longer apply. Comments begin with an exclamation point and extend to the end of the line. Statements are separated by either the end of the line or a semicolon. A physical line is limited to 132 characters. Lines can be continued with an ampersand.
 
 #+begin_src f90
 
@@ -30,7 +32,16 @@ Fortran is a line oriented language. Comments begin with an exclamation point or
 
 #+end_src
 
-Identifier names can be up to 31 characters long. Case is not significant. Valid characters are A..Z, 0..9, and underscore (_). The first character must be a letter.
+*** Character set, tokens, and names
+
+I'm sure it's more universal than this, but everything I see is Western Latin alphabetic and numeric characters. The special characters used for non-identifier tokens and grouping are a small set. You could still easily type in source on a card punch machine.
+
+- a-z (or A-Z), case insensitive
+- 0-9
+- _ an underscore
+- + - / * ! . , (  ) < > ; : ' " = %
+
+Identifier names can be up to 31 characters long, must start with an alphabetic character, followed by any of alphabetic, numeric, or underscore characters.
 
 *Declare variables explicitly*
 
@@ -38,15 +49,76 @@ Always begin a program with ~implicit none~. Otherwise the old Fortran 77 conven
 
 Programs should be named, as in ~program test~, and conclude with ~end program test~'.
 
-** Data Types
+** Data Types and Variables
 
-The elementary or basic data types are:
+*** Data Types
+
+The elementary or basic data types are generic. They are:
 
 - integer
 - real
-- complex
-- character
-- logical
+- complex (real and imaginary parts)
+- character (fixed length)
+- logical (true, false)
+
+**** Use the kind attribute for type specificity
+
+
+*** Kind of number
+
+~kind~ can be used to specify expected precision or other implementation dependent properties of numbers. See also the ~iso_fortran_env~ and ~iso_c_binding~ modules. ~kind=n~ where ~n~ is an integer.
+
+In earlier Fortran implementations, _star notation_ was used to indicate size which carried with it an implied precision. Then ~kind=n~ was introduced with the following meanings in GNU compilers.
+
+- 1 means the default size for the generic type in the implementation. GNU says these are typically REAL*4, INTEGER*4, LOGICAL*4, and COMPLEX*8. Full words from my assembly days.
+- 2 means twice the default. Double words.
+- 3 means the type occupies the storage required for a default character in the implementation. Typically one byte, as in INTEGER*1 and LOGICIAL*1. Further increments by 3 double the storage of the prior 3-kind. This is not available in all Fortran implementations.
+- 5 means half the default. INTEGER*2, LOGICAL*2. Half words.
+- 7 integer only, and refers to the smallest sized pointer in the implementation that can address a byte or array element or substring.
+
+Fortran 2003 and 2008 cleaned this up. In addition to providing standard names for kinds (see later) there are intrinsic functions to determine if the required precision or range are available.
+
+Fortran 2003 introduced the ~iso_fortran_env~ module, and Fortran 2008 introduced the following standard names that mean what most of us would expect.
+
+- INT8
+- INT16
+- INT32
+- INT64
+- REAL32
+- REAL64
+- REAL128
+
+Literal constants also have type and kind. A common idiom is to append _<kind> to a constant. The <kind> name could be a one of the above, or a named constant created with the ~selected_real_kind(mantissa_digits, exponent_range)~ or ~selected_int_kind(digits)~ functions.
+
+#+begin_src f90
+
+  ! example, use one of sp and dp below and then the declarations follow
+  ! mnemonically sp for single precision, dp for double precision, etc
+  integer, parameter :: sp = selected_real_kind(6, 37)
+  integer, parameter :: sp = kind(1.)
+  integer, parameter :: dp = selected_real_kind(15,307)
+  integer, parameter :: dp = kind(1.d0)
+  integer, parameter :: qp = selected_real_kind(33,4931)
+  integer, parameter :: i4 = selected_int_kind(9)
+  integer, parameter :: i8 = selected_int_kind(16)
+  real (kind=sp) :: x,y ! or: real (sp) :: x,y
+  real (kind=dp) :: a,b ! ("double precision")
+  ! other code
+  a = 3.14159_dp
+  dword = 8_i4
+
+#+end_src
+
+There are some heated debates on how to properly use the ~selected_xxxxx_kind()~ intrinsic functions, but following creates sets ~r8~ to the ~kind~ that will support reals with at least 15 decimal digits of precision and an exponent range of at least 9. This might map to double precision floating point (REAL64) but that is not guaranteed. All that is guaranteed is if selected_real_kind returns a positive value, that kind will support the requested precision.
+
+#+begin_src f90
+
+  integer, parameter :: r8 = selected_real_kind(15,9)
+  real(kind=r8) :: a
+
+#+end_src
+
+*** Derived types or structures
 
 Derived or programmer defined types are created by the ~type ... end type~ construct. For example:
 
@@ -57,17 +129,20 @@ Derived or programmer defined types are created by the ~type ... end type~ const
      integer            :: age
   end type person
   type(person)      :: myself
-  myself%name = 60
+  myself % name = 60
 
 #+end_src
 
-Variable types are refined by attributes that can describe usage, source, scope, and so forth.
+The percent sign ~%~ is used to access the named member of the type, much like ~.~ is used in other languages.
+
+*** Attributes of variables beyond type
+
+Variables can be further refined by attributes describing usage, source, scope, and so forth.
 
 - dimension
-- allocatable
+- allocatable (dynamically acquired and sized)
 - parameter (within this scoping unit, this is a constant)
 - intent (in, out, inout for arguments)
-- kind (is this a short or long integer, what precision is required for real numbers)
 - len
 - save (static)
 - pointer
@@ -88,58 +163,24 @@ For example:
 
 #+end_src
 
-The ~kind~ can be used to specify expected precision or other implementation dependent properties of numbers.
+*** A potential gotcha
 
-There are intrinsic functions to determine if the required precision or range are available.
-
-- ~selected_real_kind(mantissa_digits, exponent_range)~
-- ~selected_int_kind(digits)~
-
-If the required precision is not available the function returns a negative value.
-
-#+begin_src f90
-
-  ! example, use one of sp and dp below and then the declarations follow
-  ! mnemonically sp for single precision, dp for double precision, etc
-  integer, parameter :: sp = selected_real_kind(6, 37)
-  integer, parameter :: sp = kind(1.)
-  integer, parameter :: dp = selected_real_kind(15,307)
-  integer, parameter :: dp = kind(1.d0)
-  integer, parameter :: qp = selected_real_kind(33,4931)
-  integer, parameter :: i4 = selected_int_kind(9)
-  integer, parameter :: i8 = selected_int_kind(16)
-  real (kind=sp) :: x,y ! or: real (sp) :: x,y
-  real (kind=dp) :: a,b ! ("double precision")
-
-#+end_src
-
-Constants also have type and kind. In the context of the preceding block:
-
-- integers: i, 7890, 1_i8
-- real: 1., 1.0, 1.e7, 1.23e-8, 4.356d-15, 1._dp, 2.7e11_sp
-- complex: (0., -1.), (2e-3, 77._dp)
-- character: 'Hello', "I'm a character constant", 'xx''yy' -> "xx'yy"
-- logical: .true., .false.
-- derived: person("fred", 15)
+You might be tempted to add an initialization to the variable definition. *DO NOT DO THIS* While ~integer, parameter :: np = 3~ creates a constant named ~np~, ~integer :: counter = 1~ implies ~save~ and creates a static variable. ~counter~ will keep its value across function/subroutine invocations.
 
 ** Expression Operators
 
+*** Numeric operators and intrinsic functions
+
 Fortran has all the traditional operators and intrinsic functions:
 
-- +
-- -
-- *
-- /
+- + - * /
 - ** (power)
-- // (string concatenation)
-- sin
-- cos
-- tan
-- atan
-- exp
-- log
-- log10
+- sin cos tan atan, hyperbolic varieties of these
+- rand, int, real
+- min, max
+- exp log log10
 - sqrt
+- and so many more
 
 Operations use the precision of the most precise operand. It's not clear to me yet if or when lower precision operands are promoted, but I don't expect many surprises in my code.
 
@@ -148,6 +189,9 @@ Operations use the precision of the most precise operand. It's not clear to me y
 - 1/2. ==> 0.5000000
 - 1/2._dp ==> 0.50000000000000
 - 1+(1.,3) ==> (2.000000,3.000000)
+
+*** Characters (strings?)
+
 
 Logical and comparison operators use the original .xx. style and have some symbolic representations as well.
 
@@ -162,6 +206,7 @@ Logical and comparison operators use the original .xx. style and have some symbo
 - .le. or <=
 - .eqv. and .neqv. to compare logical variables
 - .llt., .lle., .lgt., .lge. for lexical comparison of characters
+- // (string concatenation)
 
 ** Looping
 
@@ -222,7 +267,7 @@ In some situations, an implied ~do~ can be used. For example:
 
 #+end_src
 
-~exit~ may be used to terminate an infinite loop as above, or it can be used to break out of any other loop.
+~exit~ may be used to end a loop. This is the same as ~break~ in other languages. Control passes to the statement after the ~end do~. The name of the loop to cycle back to can be specified and works correctly when dealing with nested loops.
 
 #+begin_src f90
 
@@ -242,7 +287,7 @@ In some situations, an implied ~do~ can be used. For example:
 
 #+end_src
 
-~cycle` starts a new cycle of a loop, and may be named when dealing with nested loops. For example:
+~cycle~ starts a new cycle of a loop. (~continue~ in other languages). The name of the loop to cycle back to can be specified and works correctly when dealing with nested loops. For example:
 
 #+begin_src f90
 
@@ -887,8 +932,41 @@ CMake is also on deck.
 
 ** Best Practices (I hope)
 
-- Always use ~implicit none~.
+*** Generalities
+
+- Always use ~implicit none~. It should be specified in each scope.
 - Use underscore instead of camel or Pascal casing for names.
 - Factor out code into modules when possible.
 - Use FPM.
 - Use CMake.
+- Use a testing framework. Two I have found that look good for my needs and style are:
+  - See ftnunit by Arjen Markus mentioned on discourse and found at SF [[https://flibs.sourceforge.net/][flibs]]
+  - See test-drive from Fortran-Lang (by awvwgk/Sebastian Ehlert) at [[https://github.com/fortran-lang/test-drive][github]]
+
+*** Modules
+
+~use~ directives must be the first thing in a scope, even before ~implicit none~.
+
+There are two _standard_ modules that should be available on all compilers that I expect to use.
+
+- ~iso_fortran_env~ provides several named integer constants that can be used refine variable types by kind, common unit numbers for standard input/output, and some error status codes. Fortran 2003 and later.
+- ~iso_c_binding~ provides intrinsic functions for low level access and named constants to help define interfaces to C based APIs.
+
+It seems to be the common practice to specify only what you expect to use from a module. The syntax for this is ~use module, only: name~. It is also possible to provide an alias via ~use module, only: alias => name~.
+
+Some examples:
+
+#+begin_src f90
+
+   use iso_fortran_env, only: sp => real32, dp => real64, qp => real128
+   ! If we decide later to use iso_c_binding instead of iso_fortran_env:
+   ! use iso_c_binding, only: sp => c_float, dp => c_double, qp => c_float128
+
+   ! resolve name collision
+   use module1, only: mod1_init => initialize
+   use module2, only: mod2_init => initialize
+
+   call mod1_init
+   call mod2_init
+
+#+end_src
