@@ -1,0 +1,225 @@
+	   ===============================================
+			       cfaring
+				  or
+	   (too many) years before the mast leave me csick
+	   ===============================================
+
+Since I started writing code again, I've been playing with Smalltalk,
+Scheme, Forth, Go, Python, Ruby, Fortran, and Pascal. All the while
+avoiding C even though I am by training and preference a low level
+coder of assembly languages. I've finally given up and embraced C.
+
+Well, at least I shook hands with C after finding Go to be lacking.
+
+
+What's Wrong with Languages
+===========================
+
+No language or platform is perfect, or suited for all problem domains.
+I feel I've made an honest effort to look at many languages and
+paradigms, even taking a course on programming languages where I was
+exposed to SML, Ruby, and Racket.
+
+Here are some of the reasons I stopped using other languages for most
+of my work:
+
+* Pascal ... Delphi is Windows only and I find the Free Pascal project
+  to tied up with the Lazarus IDE and forms based development. Then
+  there's the provincial thinking among the movers and shakers.
+  Getting close to ISO Pascal using either is painful and unnatural.
+
+* Smalltalk ... too visual and IDE dependent. Much of the old
+  provincialism is gone thanks to Pharo, but I want a more
+  minimal and textual environment. The Smalltalk approach to
+  objects is the best in my opinion, but that is not enough
+  of a reason to put up with environments I don't like.
+
+* Java and C++ ... Objects done almost right in both. Java feels very
+  much like a bolt on solution. C++ seems to bring no benefit beyond
+  objects, and if I'm going to program and think at a lower level, why
+  carry the extra baggage?
+
+* Fortran ... wow, they've come a long way and Modern Fortran
+  rocks. I could do most everything I want to with Fortran
+  2008+, but the language and tools are geared toward numerical
+  work and that's not my primary domain.
+
+* Forth ... powerful but it just isn't meshing with my thinking. I
+  wish it did. Scheme/Lisp/SML have the same 'not quite natural'
+  feeling.
+
+* Scheme/Lisp(s) ... these are cool but a level above where I tend to
+  think. I have more work I want to do with Scheme and SICP, but not
+  yet.
+
+* SML ... I just don't think in terms of functional programming. There
+  are good ideas there that I try to use (immutable arguments) but the
+  language forms, as with Scheme, just don't flow in my mind.
+
+* Go ... gah. A clear cut usuable replacement for C that keeps
+  growing. Feature creep destroys the language. So close but moving
+  away quickly.
+
+* Ruby ... half a Smalltalk is worse than none.
+
+* Python ... dependency management nightmare coupled with feature
+  and library creep.
+
+* JavaScript/Node/etc ... dependency management, extra environmental
+  requirements (another bolt on like Java), and a false sense of
+  familiarity since at first glance it looks like a C language.
+
+
+Why I Went Off To C
+===================
+
+I tend to view problems from closer to the metal (or silicon) than
+most people. Working at higher levels of abstraction is usually the
+right answer for most real world code, but this is me doing hobby
+code. Rather than going into a trance wondering how Scheme or
+Smalltalk does something internally, I just write code and put the
+bits and bytes where I think they belong.
+
+I think my objections to C are valid, but ongoing standardization has
+removed some of them and codified best practices around others. It's
+not perfect, and never will be, but following C99 and my own ideas of
+good programming practice is working out well for me.
+
+I'd rather use classic mainframe assmebly langauge, S/370 or S/390,
+but I don't want to manage an MVS or VM environment. Maybe later.
+
+
+Rules To Avoid C Sickness
+=========================
+
+Many of these rules are not really C specific, but I'm setting them
+down here now in the context of working with C.
+
+* Pick a standard and stick with it. C99 covers everything I care
+  about.
+
+* Use (mostly) standard tooling. Either clang or gcc, and basic gnu
+  make. Yes, CMake and other tools exist, but do I really need them?
+
+* Use compiler options to enforce standards and help produce correct
+  code:
+
+  * -Wall is your friend.
+  * -fsanitize=address while debugging and testing is important.
+  * -std=C99 always.
+  
+* Consistently format code. The editor should do this on every file
+  write. I'm using astyle with a K&R style plus some tweaks that I
+  find improve readability.
+
+* One statement per line of code.
+
+* Just say no to tab characters. But it is OK to use a page break
+  (control-L) as a horizontal separator between functions.
+
+* A personal deviation from the norm in regards to comments. While
+  I don't write older systems or compilers, use old-style C comments
+  '/* */'. Yes, just about every compiler supports the '//' form of
+  comments, but not all do. 
+
+* Names are important. snake_case is more readable than CamelCase or
+  pascalCase, and kebab-case won't work with C, so use snake_case.
+
+* But use common and conventional single character or short names
+  for local working variables.
+
+* One side effect per line of code. Don't ever do something like
+  "x[i++] = some_function(j++)". It's evil and obscure.
+
+* Unless there's a really good reason otherwise, use int and char for
+  most variables.
+
+* The prior points about side effects and variable types are often
+  ignored for the sake of premature (and likely ineffective) micro
+  optimization.
+
+  * The rules for memory access on storage boundaries are obscured
+    by cache locality.
+
+  * Similarly, when optimization is enabled the compiler output for
+    options A and B following should be pretty much identical.
+
+    A: x[i++] = some_function(j++);
+
+    B: i += 1; /* does this go before or after the assignment?
+                * are you really sure? is the new junior
+		* programer sure? */
+       x[i] = some_function(j);
+       j += 1; /* yes, post increment should really come here */
+
+* It's hard for an assembly language programmer to say this, but let
+  the compiler do instruction level optimization. It will do a better
+  job most of the time.
+
+* The programmer should optimize algorithmically.
+
+* Functions should do reasonable validation of their arguments.
+
+* Use asserts to catch fatal errors such as missing pointers. If you
+  know you're going to crash anyway, crash now.
+
+* It's ok to write your own library code, but don't break with too
+  many conventions. For example, most programmers expect a char to
+  come back in an int when used as a return value.
+
+* Libraries as single file headers are easy to manage and build/compile
+  times are short enough that linkable or shared libraries are a minor
+  optimization offering mostly dependency management issues.
+
+* Memory allocation is rife with opportunities for error. The following
+  habits help avoid errors:
+
+  * Always initialize memory you allocat to a known value. A memset to
+    0 of the whole block might not be warranted, but it isn't
+    expensive.
+
+  * Always release memory you allocated.
+
+  * NULL out pointer variables as soon as is feasible.
+
+  * Prior to releasing memory, set it to some consistent and obviously
+    bad value. I use 253, but any consistent value is fine.
+
+    * Dangling pointer references to this memory are more likely to
+      fail quickly.
+
+    * Possibly sensitive data is not left visible in memory.
+
+  * Memory for control structures should have an old style eye-catcher
+    tag constaining a distinct value for the structure type.
+
+  * Assert the correctness of the tag value at the start of any
+    function that is passed the structure as a parameter.
+
+* As a personal preference, I dislike repeatedly typing 'struct'. Use
+  typedefs of the following form in the following order:
+
+  typedef struct something something;
+
+  struct something {
+     /* some declarations here */
+     something* another_something; /* note you don't have to use 'struct' here */
+  };
+
+  Instead of:
+
+  typedef struct something {
+    /* as above but ... */
+    struct something *another_something; /* you have to use 'struct' here */
+  } something;                           /* because the typedef isn't defined
+                                          * until here */
+     
+  This has multiple advantages.
+
+    * The typedef namespace is available inside the struct definition,
+      so there's no need to 'struct something' when providing a
+      pointer to another copy of the structure.
+
+    * For libraries, you only need to expose the typedef declaration
+      to client code if the client should not manipulate the structure
+      directly.

@@ -56,16 +56,18 @@ Reference sites:
 
 The LLVM Flang doesn't seem to get much use. The two compilers referenced most are gfortran and ifort (Intel). An alpha stage lfortran is in active development.
 
-I'm doing this on an Apple silicon Mac Book Air. Apple's infrastructure is built on LLVM so there are a few hoops to jump through if you want to use gfortran and gdb. Any of the options for just the compiler work fine, but the only gdb setup I've seen working is from MacPorts.
+I'm doing this on an Apple silicon Mac Book Air. Apple's infrastructure is built on LLVM so there are a few hoops to jump through if you want to use gfortran and gdb. Any of the options for just the compiler work fine, +but the only gdb setup I've seen working is from MacPorts+
 
-Do the following to get a working debug capable gfortran compiler, most of which require ~sudo~.
++Do the following to get a working debug capable gfortran compiler, most of which require ~sudo~.+
 
-- install macports from https://www.macports.org/install.php MacPorts
-- install gcc and friends ~port install gcc13 gdb cgdb~
-- select the version to use ~port select --set gcc=mp-gcc13~
-- code sign the gdb executable (ggdb). You can find various sources for this but I used https://sourceware.org/gdb/wiki/PermissionsDarwin these instructions, but the interactive approach instead of a shell script.
++- install macports from https://www.macports.org/install.php MacPorts+
++- install gcc and friends ~port install gcc13 gdb cgdb~+
++- select the version to use ~port select --set gcc=mp-gcc13~+
++- code sign the gdb executable (ggdb). You can find various sources for this but I used https://sourceware.org/gdb/wiki/PermissionsDarwin these instructions, but the interactive approach instead of a shell script.+
 
-After the above, gfortran and ggdb (note the extra "g") are available and work well.
++After the above, gfortran and ggdb (note the extra "g") are available and work well.+
+
+Sadly, the above doesn't work consistently. I see a lot of frustration when searching the web about this. After experimentation, I decided to switch rather than fight. A ~dev container~ for ~Docker~ is a workable solution. I created an Ubuntu image for AARCH64 with tooling for gfortran and gdb. Starting that container with Fortran source directories shared lets me build and use gdb when I need to. Most of the time I work in MacOS and it's mostly no issue to switch. I want to make this a bit more transparent, but it works.
 
 **** Editor Doom Emacs
 

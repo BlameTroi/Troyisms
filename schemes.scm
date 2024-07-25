@@ -25,7 +25,7 @@
 ;;; Parenthetically
 ;;;
 
-;; The plethora of parenthesis has actually not bee the problem that
+;; The plethora of parenthesis has actually not been the problem that
 ;; some fear. If you let your editor format your code, you can usually
 ;; ignore the parens as you read. When I first ran into forced formats
 ;; with gofmt I was resistant. I have other ideas about how to format
@@ -189,7 +189,7 @@ final item (final cdr if you will) of XS."
 ;;; Missing Relational Operators
 ;;;
 
-;; Lisp as predicates for comparing symbols by their "names" such as
+;; Lisp has predicates for comparing symbols by their "names" such as
 ;; alphalesserp. I don't like that name, even if I replace the "p"
 ;; with "?" the way it should be.
 ;;
