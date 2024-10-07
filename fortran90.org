@@ -8,7 +8,7 @@ This started from a short syntax refresher on Fortran 90 that I found on the web
 
 +As it's now 2024 and the Fortran 2023 standard is released, I expect to have to update this to use F95, maybe 2003? My last serious Fortran was on an IBM 360 in 1978, but I know it wasn't FORTRAN 77. I've got a lot of catching up to do.+
 
-After a few weeks of using Fortran daily with emacs on the Mac, it's grown on me. I need to update the text below somewhat, but the spirit of the changes described below from the Fortran I learned in college holds true. More features are added every few years, but for my use Fortran 95/2003 provide most everything I want.
+After a few weeks of using Fortran daily with Emacs on the Mac, it's grown on me. I need to update the text below somewhat, but the spirit of the changes described below from the Fortran I learned in college holds true. More features are added every few years, but for my use Fortran 95/2003 provide most everything I want.
 
 If you can do it in Pascal or C, you can do it in Fortran. It's just a matter of preference.
 
@@ -24,7 +24,7 @@ A recent version of _Modern Fortran Explained_ by Metcalf, Reid, & Cohen appears
 
 I have found _Modern Fortran: Style and Usage 1st Edition_ by Clerman & Spector an enjoyable read. Rules of thumb explained clearly. Strunk & White for the programmer.
 
-I have, but have yet to read in depth, _Modern Fortran: Building efficient parallel applications 1st Edition_, by Curcic. It was a Covid lock down deal from the publisher and I saw enough to make me want to explore Fortran. This book is why I started using Fortran for my Advent of Code work.
+I have, but have yet to read in depth, _Modern Fortran: Building efficient parallel applications 1st Edition_, by Curcic. It was a COVID lock down deal from the publisher and I saw enough to make me want to explore Fortran. This book is why I started using Fortran for my Advent of Code work.
 
 I plan to purchase _Modern Fortran in Practice 1st Edition_ by Markus once I've completed the 2022 and 2023 Advent of Code exercises and made some progress on Curcic's book.
 
@@ -44,7 +44,7 @@ Here's the bits you'll want to lay down on your system:
 
 - XCode command line tools from Apple ~xcode-select --install~
 - Homebrew via their macOS .pkg installer.
-- cmake, fprettify, fortls, and emacs-mac with ~brew install cmake fprettify fortls emacs-mac~. There are a lot of dependencies that come down with these, but they don't get in the way or take much space.
+- CMake, fprettify, fortls, and emacs-mac with ~brew install cmake fprettify fortls emacs-mac~. There are a lot of dependencies that come down with these, but they don't get in the way or take much space.
 
 Reference sites:
 
@@ -71,7 +71,7 @@ Sadly, the above doesn't work consistently. I see a lot of frustration when sear
 
 **** Editor Doom Emacs
 
-I tried using straight emacs, but my hands know vim key binds too well. I'd rather switch than fight. Follow the installation steps from https://github.com/doomemacs/doomemacs to get the basic setup. For Fortran support, enable it in the languages section of ~init.el~ along with a few other things. Here are the pertinent sections from my ~init.el~ with minimal context:
+I tried using straight Emacs, but my hands know vim key binds too well. I'd rather switch than fight. Follow the installation steps from https://github.com/doomemacs/doomemacs to get the basic setup. For Fortran support, enable it in the languages section of ~init.el~ along with a few other things. Here are the pertinent sections from my ~init.el~ with minimal context:
 
 #+begin_src emacs-lisp
 :editor
@@ -90,13 +90,13 @@ I tried using straight emacs, but my hands know vim key binds too well. I'd rath
 
 If you have installed ~fortls~ and ~fprettify~, things will just work. They are pretty much zero configuration. I have the following in my ~config.el~ to tweak some of the formatting rules:
 
-#+begin_src emacs-lisp
+#+begin_sic emacs-lisp
 
 ;; fortran
 ;; attempting to tweak fprettify to my tastes
 
 (after! f90
-  (set-formatter! 'fprettify
+  (set-formatter! 'ratify
     '("fprettify"
       "-w 4" "-") :modes '(f90-mode fortran-mode)))
 
@@ -106,7 +106,7 @@ For editing, Doom Emacs has decent Fortran support for the level of work I'm doi
 
 **** Build and packaging
 
-I haven't had to get too deep into this aspect yet. The Fortran Package Manager (fpm) is available and I built it from github, but most will probably want to install it from brew. CMake seems to be common but so far I'm still at the simple makefile stage for my work.
+I haven't had to get too deep into this aspect yet. The Fortran Package Manager (fpm) is available and I built it from GitHub, but most will probably want to install it from brew. CMake seems to be common but so far I'm still at the simple makefile stage for my work.
 
 **** Testing
 
@@ -214,7 +214,7 @@ In earlier Fortran implementations, _star notation_ was used to indicate size wh
 
 - 1 means the default size for the generic type in the implementation. GNU says these are typically REAL*4, INTEGER*4, LOGICAL*4, and COMPLEX*8. Full words from my assembly days.
 - 2 means twice the default. Double words.
-- 3 means the type occupies the storage required for a default character in the implementation. Typically one byte, as in INTEGER*1 and LOGICIAL*1. Further increments by 3 double the storage of the prior 3-kind. This is not available in all Fortran implementations.
+- 3 means the type occupies the storage required for a default character in the implementation. Typically one byte, as in INTEGER*1 and LOGICAL*1. Further increments by 3 double the storage of the prior 3-kind. This is not available in all Fortran implementations.
 - 5 means half the default. INTEGER*2, LOGICAL*2. Half words.
 - 7 integer only, and refers to the smallest sized pointer in the implementation that can address a byte or array element or sub-string.
 

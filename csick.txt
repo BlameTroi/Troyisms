@@ -56,7 +56,7 @@ of my work:
   are good ideas there that I try to use (immutable arguments) but the
   language forms, as with Scheme, just don't flow in my mind.
 
-* Go ... gah. A clear cut usuable replacement for C that keeps
+* Go ... gah. A clear cut usable replacement for C that keeps
   growing. Feature creep destroys the language. So close but moving
   away quickly.
 
@@ -85,7 +85,19 @@ removed some of them and codified best practices around others. It's
 not perfect, and never will be, but following C99 and my own ideas of
 good programming practice is working out well for me.
 
-I'd rather use classic mainframe assmebly langauge, S/370 or S/390,
+Update: C99 is a minimum level, but after reading the ongoing
+        standardization discussions, and seeing things such as
+        strdup() mandated by the standard, I've begun using C18.
+	
+	The changes from C99 are minimal and rational. This is
+        more codifying common useful compiler extensions and
+        best practices.
+
+        C23 is nearing release but I'll wait for it to be
+	more fully supported by compilers before I set
+	my default CFLAGS to use it.
+
+I'd rather use classic mainframe assembly language, S/370 or S/390,
 but I don't want to manage an MVS or VM environment. Maybe later.
 
 
@@ -95,18 +107,33 @@ Rules To Avoid C Sickness
 Many of these rules are not really C specific, but I'm setting them
 down here now in the context of working with C.
 
-* Pick a standard and stick with it. C99 covers everything I care
-  about.
+* Pick a standard and stick with it. -C99- C18 covers everything I
+  care about.
 
 * Use (mostly) standard tooling. Either clang or gcc, and basic gnu
   make. Yes, CMake and other tools exist, but do I really need them?
+
+Update: Yes, I actually find that I need something beyond gnu make
+        to properly manage out of source builds. The make solutions
+	involve a lot of scripting and have a dynamism that I find
+	lazy. CMake documentation is obtuse, but with a little
+	effort I can use it well enough.
+
+        It can be wordy. I won't listen to any CMake advocate
+	criticizing knocking a programming language for being
+	wordy after this.
+
+        It can target gnu make but also handles ninja which
+	allows multiple configuration definitions (release,
+	debug, release with debugging info). 
 
 * Use compiler options to enforce standards and help produce correct
   code:
 
   * -Wall is your friend.
   * -fsanitize=address while debugging and testing is important.
-  * -std=C99 always.
+  * --pedantic-errors
+  * -std=-C99- C18 always.
   
 * Consistently format code. The editor should do this on every file
   write. I'm using astyle with a K&R style plus some tweaks that I
@@ -117,10 +144,20 @@ down here now in the context of working with C.
 * Just say no to tab characters. But it is OK to use a page break
   (control-L) as a horizontal separator between functions.
 
-* A personal deviation from the norm in regards to comments. While
-  I don't write older systems or compilers, use old-style C comments
+Update: This didn't age well. The C intelligentsia and greybearded
+        oracles recommend using tabs when you can. Go formats on
+        save and enforces tabs for indenting.
+
+        Discussion supporting this approach can be found in the
+	Indian Hill C Style Coding Standards (multiple websites)
+	and in Linux kernel coding style found at:
+	
+	https://www.kernel.org/doc/html/v4.10/process/coding-style.html
+	
+* A personal deviation from the norm in regards to comments. While I
+  don't use older systems or compilers I do use old-style C comments
   '/* */'. Yes, just about every compiler supports the '//' form of
-  comments, but not all do. 
+  comments, but not all do.
 
 * Names are important. snake_case is more readable than CamelCase or
   pascalCase, and kebab-case won't work with C, so use snake_case.
@@ -148,13 +185,13 @@ down here now in the context of working with C.
 
     B: i += 1; /* does this go before or after the assignment?
                 * are you really sure? is the new junior
-		* programer sure? */
+		* programmer sure? */
        x[i] = some_function(j);
        j += 1; /* yes, post increment should really come here */
 
-* It's hard for an assembly language programmer to say this, but let
-  the compiler do instruction level optimization. It will do a better
-  job most of the time.
+* It's hard for an assembly language programmer to say this, but
+  let the compiler do instruction level optimization. It will do
+  a better job most of the time.
 
 * The programmer should optimize algorithmically.
 
@@ -163,7 +200,7 @@ down here now in the context of working with C.
 * Use asserts to catch fatal errors such as missing pointers. If you
   know you're going to crash anyway, crash now.
 
-* It's ok to write your own library code, but don't break with too
+* It's OK to write your own library code, but don't break with too
   many conventions. For example, most programmers expect a char to
   come back in an int when used as a return value.
 
@@ -174,11 +211,11 @@ down here now in the context of working with C.
 * Memory allocation is rife with opportunities for error. The following
   habits help avoid errors:
 
-  * Always initialize memory you allocat to a known value. A memset to
+  * Always initialize memory you allocate to a known value. A memset to
     0 of the whole block might not be warranted, but it isn't
     expensive.
 
-  * Always release memory you allocated.
+  * Always free memory you allocated.
 
   * NULL out pointer variables as soon as is feasible.
 
@@ -190,8 +227,19 @@ down here now in the context of working with C.
 
     * Possibly sensitive data is not left visible in memory.
 
+Note: Compilers are allowed to remove memset if they think the memory is
+      not used again. A memset followed by a free will only do the free.
+
+      I think this is wrong, but it's how things work. It may not
+      matter in many systems, but it's a bad habit to count on
+      software you don't control (the operating system) to do
+      something important.
+
+      Microsoft added memset_s, and C23 introduces memset_explicit.
+      Once C23 is generally supported, use memset_explicit.
+
   * Memory for control structures should have an old style eye-catcher
-    tag constaining a distinct value for the structure type.
+    tag containing a distinct value for the structure type.
 
   * Assert the correctness of the tag value at the start of any
     function that is passed the structure as a parameter.

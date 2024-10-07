@@ -1,0 +1,219 @@
+from: http://www.call-with-current-continuation.org/articles/brutalist-manifesto.txt
+
+I'm not 100% in agreement with this, and it's more than a little
+tongue in cheek, but there is much in here that describes my beliefs
+after a career in software development.
+
+
+    T H E   B R U T A L I S T   P R O G R A M M I N G   M A N I F E S T O
+
+
+
+I. Simplicity is essential
+
+    We always prefer the simple and short over the complex and long.
+    When we have the choice between simple or concise, we choose
+    the simpler solution as long as we come nearer to our goal. It
+    is easy to pay lip service to "simplicity", but few have the
+    courage to really embrace it, as we fear our fellow programmer's
+    verdict.  When you have the impression that an adequate solution
+    to a problem is beyond your capabilities, simplify the problem.
+    Complex code is not an achievement, nor does it make us better
+    programmers.  Code that can not be thrown away is automatically
+    technical debt and a burden. If implementation artifacts influence
+    the external appearance or usage of a program, then this is
+    acceptable as long as it doesn't impede the program's usefulness.
+    Don't underestimate the effort to write simple code. Complex
+    technology can never be simplified by adding more complex
+    technology.  Creating the computational equivalent of a
+    Rube-Goldberg device is something that you should consider a
+    practical joke or something to be ashamed of, never something
+    to take pride in. If you can't explain the internal structure
+    of a software system to someone in a day, then you have a
+    complexity problem. Some of the complexity may be necessary,
+    but it is still a serious defect.
+
+II. Solve problems instead of creating them
+
+    We want to solve concrete problems, not anticipate the tasks
+    others might have in the future, so we create applications
+    instead of frameworks. We write editors, not text-editing
+    toolkits, we write games instead of engines. We do not generalize
+    unnecessarily, as we will never be able to fully comprehend how
+    our code might be used. Moreover, we often evade our responsibility
+    to solve actual problems by procrastinating and conceiving
+    one-size-fits-all pseudo solutions for future generations that
+    will probably never use them. So, we instead identify a problem
+    that might be addressed by a computerized solution and do nothing
+    but working towards that solution. We do not create abstractions
+    for abstraction's sake but to simplify our current task.
+
+III. We are not smarter than others, others are usually not smarter
+
+    We do not think of how others might judge our code: they struggle
+    as much as we do and they don't have any more answers to our
+    problems than we have. Experience is important and necessary,
+    but creativity is, too. Only beginners think they know everything.
+    Experience can lead to cynicism, but cynicism leads to emptiness.
+    Doing something for a long time does not automatically lead to
+    experience, but failing often does.  True mastery transcendends
+    problems and works by intuition trained on making mistakes.  We
+    accept that we will be journeymen eternally and that mastership
+    is something that is given to us by grace, not effort. So we
+    don't attempt to be wizards, we just try to solve problems.
+    If a programmer seems to be 10x more productive as us, then perhaps
+    because he or she masters her programming environment more than
+    we do, doesn't bother with unnecessary things or has just a
+    different measure for productivity.
+
+IV. Do everything yourself
+
+    We do not use libraries, frameworks or third party packages
+    unless we are absolutely forced to do so. Code that we didn't
+    write we do not understand.  Code that we do not understand we
+    can not maintain. Code that we can not maintain may change from
+    version to version or may not work with another version of a
+    dependency of that code or the underlying platform that it runs
+    on. Other people's code is a liability and we do not want to
+    take responsibility for it unless we are certain that we can
+    re-implement it ourselves, if required. Forcing others to upgrade
+    a piece of software only to make our code work is insulting and
+    disrespectful. If you need additional libraries beyond what is
+    provided by default, then build them from sources.
+
+V. Strive for robustness
+
+    We follow the +/- 10 year rule: write your software so that it
+    can be made to work on 10 year old hardware and operating systems
+    and on systems that will exist 10 years from now, with reasonable
+    effort, unless your project is highly specific to brand new or
+    obsolescent hardware. That means we will not be able to ride
+    the newest hype in programming languages, software tools or
+    libraries.  Be grateful for that. This also means you will have
+    to write your code in C, or in something built on top of C.
+    That's fine, because computers were designed to run C efficiently
+    and will do so in the future (don't listen to the evangelists,
+    they still use C, they just added restrictions and gave it a
+    different name). Why should you let yourself be restrained in
+    what you can express? Shouldn't you try to learn to be more
+    thoughtful and disciplined instead? Designing robust software
+    means you know what you are doing and doing it in a responsible
+    manner.
+
+VI. Do not think you can make computing "secure"
+
+    We are humble enough to understand that computing will never
+    be fully secure.  Buggy hardware, side channel attacks and the
+    $5 wrench will always be with us, so don't fool yourself that
+    you can change that with clever programming.  Avoid cryptography,
+    if possible, as you should write all the code yourself and doing
+    your own cryptography is a well known mistake. If you need
+    privacy, do not use browsers.  If you want to hide something,
+    do not put it on the internet. We accept that we can never be
+    sure a communication channel is safe. Beware of security
+    consultants, their agenda is a different one.  Most useful
+    computing consists of handling key presses and mouse clicks
+    modifying local state on your computer.
+
+VII. Use input devices when they make the most sense
+
+    The easiest and most efficient way of designating a point on
+    the screen is by using the mouse. Use it. If changing between
+    keyboard and mouse is annoying to you, get a smaller keyboard.
+    Solely keyboard-driven user interfaces are often hardly
+    distinguishable from ideology. Solely mouse-driven user interfaces
+    can be awkward. Consider adjusting your mouse parameters,
+    consider getting a better mouse and use common sense. If a GUI
+    feature is hard to understand or cumbersome to use, it may be
+    pointless, regardless of how sophisticated and aesthetically
+    attractive it may seem. If a control in a user interface is
+    both neither obvious in its use nor clearly documented then it
+    is pointless and should not exist.
+
+VIII. Avoid all ornaments
+
+    We eschew all visual gimmicks, animations and eye-candy. They
+    do not increase the usefulness of our software, they just add
+    complexity and show that we wasted our time and energy.  In
+    user interfaces use the most basic default and stick to it. Use
+    black text on white background, it is easy to read and reduces
+    the strain on the eyes in a well-lit environment.  Others will
+    try to convince you of the opposite, but they just try to
+    rationalize their personal taste. Think of visually impaired
+    users.  Don't burden the user with needless configurations. The
+    aesthetics of simplicity almost always turn out to be more
+    pleasing than pretty graphics, animations or subtle color
+    schemes. If you need graphics, you probably do not need a full
+    graphical user interface toolkit. If you need a complex graphical
+    user interface, then simplify it. User interfaces do not need
+    to look nice, they just should be obvious and effortless.
+
+IX. Tools are just tools
+
+    We use tools, we replace them, we ignore them, and we shouldn't
+    be dependent on them. They may become obsolete, non-portable,
+    broken, but we still have to go on.  Careful thought and "printf"
+    debugging is still the best method to find bugs.  When you are
+    really stuck, take a long walk and think about it. You will be
+    surprised how often that works. We avoid all-powerful intermediate
+    data formats, as plain text with clear structure is universal,
+    easy to debug, portable and extensible. If you think you need
+    a database consider first whether the file system is really not
+    sufficient for your needs. The only truly crucial tool is
+    between your ears.
+
+X. Be humble
+
+    We are not Google. We will never need the scalability that we
+    so often think is what makes software "robust". Machines are
+    fast enough for quite some time, now.  Making outlandish demands
+    for scalability or performance is often confused with
+    professionalism.  We measure before we optimize and we never
+    trust benchmarks that others have done.  Hardware is cheaper
+    than software. Algorithms of linear complexity, linked lists,
+    statically allocated memory and global state each have their
+    place and use. Think about how much of your decision to dismiss
+    the straightforward approach is based on folklore, insecurity
+    or delusion.  Portability is overrated, we don't fool ourselves
+    that we can manage to maintain our code on all possible platforms.
+    We maintain only what we can test on real hardware. We are not
+    tempted into thinking we will revolutionize the world of computing
+    - we are just tool-making primates. The sharpened flint-stone
+    and the wheel probably had a bigger impact on civilization than
+    our sophisticated compiler or over-engineered high-performance
+    database.
+
+XI. Don't work for free if you do not enjoy it
+
+    When we create software for others to use, we are doing them a
+    service (unless we expect to be compensated in one form or the
+    other). When we provide a solution to a particular software
+    problem, we are free to do it in the way we find adequate.  If
+    a proprietary software platforms forces us to use broken software
+    tools and programming interfaces, we should consider to not
+    write software for that platform, unless we are employed by the
+    vendor or compensated in another way. If the interface with
+    which our software has to communicate is weak, then we should
+    think hard before putting any effort into overcoming the
+    obstacles. If the interface causes us mental or physical pain,
+    we stop programming against it. Too many programmers have been
+    worn out by bad languages, tools and APIs. How can we trust
+    platforms and enrich their ecosystem which sucked the life out
+    of us and our fellow programmers?
+
+XII. Do not listen to others
+
+    We never take a software methodology, school of programming or
+    some random internet dude's "manifesto" at face value. Rules
+    must be broken, when necessary.  You decide in the end what is
+    right and what is wrong, depending on circumstances. Every rule
+    has its exception, Cargo cults lurk everywhere and every promise
+    that something makes your life as a programmer easier while not
+    acknowledging that you will have to pay for it in one way or
+    another is a lie. "Computer science" is to the largest part
+    religion, propaganda and hype.  Principles are important, but
+    should only guide and not control you.  Only psychopaths and
+    monks are able to live up to them to their final consequences.
+    "Best practices" just formalize mediocrity. Innovation means
+    diverging from the mainstream. Art means creating something
+    that didn't exist before.
