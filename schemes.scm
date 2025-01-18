@@ -2,6 +2,24 @@
 ;;; Troyisms for Scheme, Lisp, Elisp.
 ;;;
 
+;; Updates January 2025: I've been working in C for a long time but I
+;; am turning back to Scheme. There are two Scheme based texts I want
+;; to work through, _Simply_Scheme:_Introducing_Computer_Science_ and
+;; the venerable _Structure_and_Interpretation_of_Computer_Programs_
+;; (SICP).
+;;
+;; Both books have their own layer over Scheme, and thus neither is
+;; a Scheme textbook, but the focus is on thinking differently.
+;;
+;; Current plan is to finish _Simply_Scheme_ (SS) then go back to
+;; finish _Essential_Lisp_ (EL) before moving to SICP. SS bills itself
+;; as an introduction to SICP for the less mathematically inclined. It
+;; avoids mutation and focuses on functional programming.
+;;
+;; I'm reviewing and updating these notes based on my current
+;; understanding of things Scheme.
+
+
 ;; There are likely better ways to do some of these things, but I
 ;; haven't learned them yet. I'm just enjoying programming again.
 ;;
@@ -11,13 +29,15 @@
 ;; * Looping Constructs or Special Forms
 ;; * Let Forms and Nested Definitions
 ;; * Nil Punning
-;; * Variable Arguments
+;; * Which revision of Scheme to use?
+;; * Variable Arguments.
 ;; * Last Item in a List
 ;; * Atomic Listlessness
 ;; * Missing Relational Operators
 ;; * Time Time Time Look What's Become of Me
 ;; * Simple Formatting of Strings
 ;; * Destructive Functions or Shoot Your Foot Off
+;; * List splices? Slices?
 ;; * Property Lists
 
 
@@ -39,19 +59,20 @@
 ;;
 ;; After working without paredit for a while I began to see the common
 ;; mistakes/typos I was making and saw how paredit or lispy might
-;; help.
+;; help, but I haven't been able to stick with either. Old fingers and
+;; old habits. I will try them from time to time and maybe one time
+;; I'll keep one.
 ;;
-;; I'm now using lispy and emacs. I don't fully utilize lispy yet, but
-;; with practice I become more proficient.
-;;
-;; I went with lispy over paredit because it provides single character
-;; almost vi like keystrokes for some common commands. I've nothing
-;; against key chording, but my fingers know basic vi navigation and
-;; so this comes naturally.
+;; The reason to prefer lispy over paredit is that it provides single
+;; character almost vi like keystrokes for some common commands. I've
+;; nothing against key chording, but my fingers know basic vi
+;; navigation and so this comes naturally.
 ;;
 ;; abo-abo on github provides documentation and tutorial videos for
-;; his lispy.
-
+;; his lispy. NOTE: abo-abo seems to have gone into semi-retirement
+;; since children came into his life. But there are others on GitHub
+;; who work on his projects. It is also common for Emacs packages to
+;; reach a stable state and then go years without updates.
 
 
 ;;;
@@ -59,8 +80,8 @@
 ;;;
 
 ;; Scheme prefers recursion to the special forms supporting loops in
-;; Lisp. Two are provided by Scheme: while and do. I have a mental
-;; block regarding the do form in Scheme and will almost always use
+;; Lisp. Two are provided by Scheme: `while' and `do'. I have a mental
+;; block regarding the `do' form in Scheme and will almost always use
 ;; some other way to build a loop.
 ;;
 ;; (while (cond)
@@ -72,32 +93,29 @@
 ;;     persist changes to the variables defined
 ;;     above)
 ;;
-;; Both forms support (break) and (continue) which do what you
-;; expect.
-
+;; Both forms support (break) and (continue) which do what you expect.
 
 
 ;;;
 ;;; Let Forms and Nested Definitions
 ;;;
 
-;; All the cool kids use let/let*/letrec* and so on. Me, I'm an old
-;; retired assembler programmer from the mainframe world. I'm only
+;; All the cool kids use `let'/`let*'/`letrec*' and so on. Me, I'm an
+;; old retired assembler programmer from the mainframe world. I'm only
 ;; cool when my big iron is water cooled.
 ;;
-;; I still use let/let* and family when appropriate, but my early
-;; Pascal days have me falling into creating local functions and
-;; variables using nested defines.
+;; I still use `let'/`let*' and family when appropriate, but my early
+;; Pascal days have me falling back into creating local functions and
+;; variables using nested `define's.
 ;;
 ;; Lexical scope is your friend. Use it.
 ;;
 ;; This simplifies parameter passing, reduces name space pollution,
-;; and postpones structuring decisions that I feel have to be made
-;; up front with the let family of forms.
+;; and postpones structuring decisions that I feel have to be made up
+;; front with the `let' family of forms.
 ;;
-;; I usually refactor to letish code once I feel things are nearing
+;; I usually refactor to `let'ish code once I feel things are nearing
 ;; their final form.
-
 
 
 ;;;
@@ -108,10 +126,10 @@
 ;;; What do you get the man who needs nothing?
 ;;;
 
-;; Scheme doesn't pun around with nil the way Common Lisp does. This
-;; was a source of some frustration while working through an old Lisp
-;; text Essential Lisp. I like the punning, but I also understand why
-;; Scheme doesn't use it.
+;; Scheme doesn't pun around with `nil' the way Common Lisp does. This
+;; was a source of some frustration while working through the old Lisp
+;; text _Essential_Lisp_. I like the punning, but I also understand
+;; why Scheme doesn't use it.
 ;;
 ;; One apparent idiom in Lisp is returning nil from a function. I
 ;; don't usually care what a function returns if the function'
@@ -124,21 +142,38 @@
 ;; This shuts Guile up. Since nothing is specified, we get the
 ;; #<unspecified> value. The defined name could be nil, but in the
 ;; spirit of not punning:
+
 (define nothing)
 
+
+;;;
+;;; Which revision of Scheme to use?
+;;;
+
+;; Neither Guile nor Chez will allow me to load the support files for
+;; SS, and I assume they'll have problems with SICP when I get there.
+;; Both books are from the R5RS erra of Scheme while both Guile and
+;; Chez are R6RS or R7 small. It originally didn't occur to me that
+;; this would matter, but it does. The SS code redefines some
+;; primitives and Guile behaves badly when I try it while Chez flat
+;; out refuses to allow it.
+;;
+;; I don't know I'll need or want things like `nothing' back in the R5
+;; world, or if I'll even want it as my Scheme becomes more idiomatic.
 
 
 ;;;
 ;;; Variable Arguments.
 ;;;
 
-;; Lisp and Scheme have wonderful syntax and support for variable
-;; arguments to functions. I came up with the code below while
-;; experimenting and decided to keep it here as a reminder of how
-;; some of these things work.
+;; Both Lisp and Scheme have wonderful syntax and support for variable
+;; number of arguments to functions. I came up with the code below
+;; while experimenting and decided to keep it here as a reminder of
+;; how some of these things work.
 ;;
-;; Functions such as min or max in Scheme already do this, but
-;; but for illustration:
+;; Functions such as min or max in Scheme already do this, but but for
+;; illustration:
+
 (define (applicator f xs)
   (cond ((null? xs) #f)
         ((not (list? xs)) xs)
@@ -147,7 +182,6 @@
 (define (min-of . xs) (applicator min xs))
 (define (max-of . xs) (applicator max xs))
 (define (sum-of . xs) (applicator + xs))
-
 
 
 ;;;
@@ -163,6 +197,7 @@
 ;;
 ;; I got the impression that reverse is not considered an expensive
 ;; operation from several items I saw on Stack Overflow.
+
 (define (last xs)
   "Naive implementation of CL's LAST to get a list containing the
 final item (final cdr if you will) of XS."
@@ -171,7 +206,6 @@ final item (final cdr if you will) of XS."
   "Return the last element of list X."
   (car (reverse x)))
 
-
 
 ;;;
 ;;; Atomic Listlessness
@@ -179,10 +213,10 @@ final item (final cdr if you will) of XS."
 
 ;; Scheme doesn't define an atom? predicate. I'm not sure if this is
 ;; completely correct, but it's quick and easy.
+
 (define (atom? x)
   "Semantics unclear as yet, but atoms aren't lists so."
   (not (list? x)))
-
 
 
 ;;;
@@ -195,10 +229,10 @@ final item (final cdr if you will) of XS."
 ;;
 ;; Note that these are case sensitive. I think that's appropriate
 ;; for the likely usage, but it's easy enough to change if not.
+
 (define (symbol< x y) (string< (symbol->string x) (symbol->string y)))
 (define (symbol= x y) (string= (symbol->string x) (symbol->string y)))
 (define (symbol> x y) (string> (symbol->string x) (symbol->string y)))
-
 
 
 ;;;
@@ -214,6 +248,7 @@ final item (final cdr if you will) of XS."
 ;;
 ;; The operation should be quoted to allow deferred evaluation.
 ;; Example: (duration '(permut '(a b c))).
+
 (define (duration x)
   "Time the duration of sexp X using time of day.
 You need to quote X."
@@ -226,7 +261,6 @@ You need to quote X."
     (display " stop at: ")(display stop)(newline)
     ;; todo, calculate difference
     ))
-
 
 
 ;;;
@@ -245,7 +279,6 @@ You need to quote X."
 ;;     ~s                                         write
 ;;     ~% insert newline
 ;;     ~~ insert tilde
-
 
 
 ;;;
@@ -274,20 +307,30 @@ You need to quote X."
 ;; single atom will leave you with a 2 item list.
 ;;
 ;; Scheme also provides list-set! to update any cons cell in the a
-;; list by its offset (0 = car, length-1 = final cdr). While the
-;; prior set-car! and set-cdr! take values (that may be lists), the
+;; list by its offset (0 = car, length-1 = final cdr). While the prior
+;; set-car! and set-cdr! take values (that may be lists), the
 ;; list-set! function takes a cons cell.
 ;;
-;; I'm not fond of either set of names, but the following allows me
-;; to use more standard Lisp code easily:
+;; I'm not fond of either set of names, but the following allows me to
+;; use more standard Lisp code easily:
+
 (define nconc append!)
 (define (rplaca xs v) (set-car! xs v))
 (define (rplacd xs v) (set-cdr! xs v))
-;;
-;; Note that Scheme provides list-set! list offset value where value should
-;; be a pair (cons cell) to write over the currently existing cell.
 
+;; Note that Scheme provides list-set! list offset value where value
+;; should be a pair (cons cell) to write over the currently existing
+;; cell.
 
+
+;;;
+;;; List splices? Slices?
+;;;
+
+;; There are many cases where a list or an item in a list participates
+;; in another list. If you append list b to list a, the tail of the
+;; result is the original b, which can still be access as b. This is
+;; one reason for the bias against updating in Lisp and Scheme.
 
 ;;;
 ;;; Property Lists
@@ -308,7 +351,7 @@ You need to quote X."
 ;; support some form of property list but there are differing
 ;; implementations. Chez Scheme seems close to the Lisp used in
 ;; the text I'm learning from (dating back to 1987) but I'm using
-;; Guile and will likely continue to do so.
+;; Guile.
 ;;
 ;;    Lisp                Guile Scheme
 ;;    ----                ------------
@@ -332,6 +375,7 @@ You need to quote X."
 ;;
 ;; Support functions load-properties and dump-properties can be
 ;; used to populate properties on atoms.
+
 (define (putprop atom value property)
   "Assign a property to the ATOM (or symbol) with the key PROPERTY
 and the specified VALUE.
@@ -396,3 +440,6 @@ displaying the property."
                   (display " ")))
       (set! xs (cdr xs))))
   (display ""))
+
+;; I don't know if these are needed with Chicken Scheme. So time
+;; will tell.
