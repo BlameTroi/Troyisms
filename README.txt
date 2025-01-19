@@ -35,7 +35,7 @@ So let it be done.
                                Contents
                                ========
 
-In alphabetic order, here are the file names and short descriptions.
+In alphabetic order, here are the file names and short description.
 
 LICENSE            -- The usual.
 
@@ -60,6 +60,9 @@ fpc-command-line  -- A cheat sheet.
 
 indianhill.txt    -- Revision 6.0 of the an early influential best
                      practices document for C.
+
+retroreading.txt  -- Why and how I approach learning what I already
+                     partially know.
 
 schemes.scm       -- My notes on working with Scheme as I go through
                      three books on Lisp/Scheme programming. It's a

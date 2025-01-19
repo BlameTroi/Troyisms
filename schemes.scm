@@ -188,6 +188,13 @@
 ;;; Last Item in a List
 ;;;
 
+;; (last) is part of srfi-1, which you would think is automatically
+;; imported but it isn't in Guile. It is in Chicken. Chez appears to
+;; not include srfi implementations and I haven't needed to download
+;; the libraries.
+;;
+;; If you need a last in a hurry ...
+;;
 ;; Scheme doesn't have a last function, at least not under that name.
 ;; While my eyes are open for a better implementation or the "real"
 ;; Scheme function for this, the following helpers suffice.

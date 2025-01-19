@@ -1,0 +1,53 @@
+                            =============
+                            RetroReading:
+                              Why do it?
+                            How to do it.
+                            =============
+
+I enjoy reading old computer texts. I don't have the eyesight and
+hands required to build out a retrocomputer, but I can still enjoy the
+retro experience.
+
+My career was atypical in some ways: no degree, heavy assembly
+language, and real infrastructure work. But in other ways it was
+mainstream: Yourdon, Martin, structured design, waterfall project
+management. I passed up opportunities to get out of my comfort zone
+(Smalltalk, Prolog, the early days of OOP) and missed out on some of
+the first time "ah ha" moments that come with having your mind
+expanded by a new idea.
+
+Now in retirement, I like to go back in time and explore the paths
+I didn't take. I know I'll miss out on many of the genuine "ah ha"
+moments, but I can take steps to make the experience more authentic.
+
+I can't unlearn what I already know, but I can limit myself to the
+tools I might have used back in the 80s and 90s. A minimal Emacs
+instead of an IDE, work at the command line, text instead of word
+processing, and no fucking ChatGPT guidance!
+
+I find the most challenge and most fun when I limit myself to "what I
+would have known" at that point of my career arc. For example, as I'm
+reading and working the problem sets in _Simply_Scheme:_Introducing_
+Computer_Science_ (SS), I don't use statements (forms) that haven't
+been introduced and instead write solutions as I think I would have in
+1990 when this book came out.
+
+Why in the world would anyone do this?
+
+That's not an idle question, I've been asked it more than once.
+
+The authors introduced ideas with an intent. This particular book goes
+out of its way to change the order in which recursion and looping and
+mutating state are presented. _Structure_and_Interpretation_of_
+Computer_Languages_ (SICP) takes a different approach. Wirth has
+different ideas in _Algorithms_+_Data_Structures_=_Programs_.
+
+This approach works for me and is enjoyable. It's why my repositories
+and file systems are littered with code that some would consider
+beneath someone with my experience.
+
+
+Troy Brumley, BlameTroi@gmail.com
+January 2025
+So let it be written,
+So let it be done.
