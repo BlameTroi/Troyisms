@@ -1,0 +1,30 @@
+# Python specific .editorconf -- the expected set for all my cofigurations.
+
+# --------------------------------------------------------------------
+# I am Groot!
+
+root = true
+
+# --------------------------------------------------------------------
+# Typical defaults as if you are using a teletype.
+
+[*]
+indent_style = tab
+trim_trailing_whitespace = false
+max_line_length = unset
+
+
+# --------------------------------------------------------------------
+# Spaces for indenting is wrong. I know that this is the Python way,
+# but it isn't the Troi way. I'll use my preferences on my code and
+# if I work with anyone else's code I'll adhere to their standard for
+# that particular project.
+
+[*.py]
+charset = utf-8
+indent_style = tab
+indent_size = 3
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+

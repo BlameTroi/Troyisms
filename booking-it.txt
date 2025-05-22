@@ -1,0 +1,107 @@
+						=======================
+							Booking It
+						My Approach to Studying
+							in Retirement
+						=======================
+
+
+I'm interested in what might be considered industry archaeology or
+historical re-enactment. Sort of my own version of the retrocomputer
+movement, but retrolearning for the retrobrain.
+
+When the various texts I want to read and work through were first
+published I was a mainframe systems software engineer heavily into
+assembly language. My employers were very mainstream and things such
+as Lisp/Scheme, Smalltalk, Prolog, and other languages weren't
+something I looked at--not relevant to my career goals.
+
+Now I'm retired and going back to to explore the paths not taken.
+There are almost certainly better languages and better ways to learn
+things that are "new to me" but I'm (as much as possible) looking at
+things in the context of their time and what I knew and didn't know
+back then.
+
+What tools and books would I have used in the 80s and 90s?
+
+I'm not entirely crazy. I'm using modern hardware, but also older
+texts and relatively simple programming environments. I programmed
+without an IDE for many (many) years. 
+
+
+A Specific Example--Simply Scheme:
+---------------------------------
+
+I was exposed to Scheme while taking a MOOC on programming languages
+a few years back.(NOTE: I highly recommend Dan Grossman's course on
+Programming Languages, I took it through Coursera). I saw more Lisp
+when using Emacs. Reputedly this language family, as with Forth or
+Smalltalk, are mind expanding. They show you different ways to think
+about problem solving.
+
+Stretching my mental muscles is what this whole thing is about.
+
+There are many classics on Scheme, but I found Simply Scheme and
+decided to use it, in spite of recommendations to use something more
+modern from r/scheme. It was felt to be too old and too quirky.
+
+Age was not a problem. Have the core aspects of Scheme (Lisp,
+Smalltalk, C, ...) really changed much in the past twenty years?
+
+As to quirkiness, the argument was that the authors aren't teaching
+Scheme directly. They provide a non-standard abstraction layer
+reducing data types and hiding some details and terminology. SICP
+also has some cap code making its Scheme non-standard but apparently
+this is OK because it's SICP.
+
+
+The rational behind the authors' abstractions:
+---------------------------------------------
+
+The authors provide an abstraction layer that I agree helps someone
+new to Scheme and Functional Programming manage all the new ideas.
+Lists and atoms are sentences and words, and typing of the atoms
+(words) is very flexible, as you would see in Logo or Rexx. The
+car/cdr and basic iteration are first, last, keep, every,
+accumulate, and so on.
+
+For the beginner, there are new and big ideas to learn when they
+start programming:
+
+data types -- the text abstracts them to sentences, words, strings,
+	and numbers. (+ "7" 3 '8) works in their framework.
+
+literalness of programming -- the idea that the computer does what
+    it was told to do and not what the programmer meant is an early
+    source of frustration. By abstracting some of the details at
+    first, the opportunity for the "told vs meant" bugs is reduced
+    and the possible causes of the differeence are reduced,
+    speeding debugging and learning.
+
+control structures -- are limited and common idioms are given names
+     that make sense without forcing the learning to cope with the
+     details of recursion while they learn why and how to use
+     recursion.
+
+The authors are quite clear to the reader about what they are
+doing, and the abstractions begin to be lifted about halfway
+through the text. Once the reader is used to functional/scheme
+conventions they are ready to learn the standard terminology.
+
+Expecting the reader to climb only one learning curve at time
+improves the learning experience.
+
+The covers start to peel back a little more than halfway through the
+text. The abstractions make it easier to focus on concepts without
+having to deal with terminology, but when it is time to do so the
+reader is introduced to 'car' to replace 'first', 'cdr' to replace
+'butfirst', 'lists' instead of 'sentence', 'map' instead of 'every',
+and so on.
+
+I believe it's a sound approach. These books are teaching programming
+or computer science, they aren't specifically language courses.
+
+
+Troy Brumley, blametroi@gmail.com, February 2025.
+
+So let it be written,
+So let it be done.

@@ -1,0 +1,59 @@
+fpc command line options
+
+for release
+
+-O1 -Xs -Sgix -ap -vewnhlb
+
+for development
+
+-glw3 -Ciort -ap -Sgix -vewnhlb
+
+i don't see a way to set booleval on from the command line, the following
+preamble is probably needed in all code
+
+{$LONGSTRINGS OFF}
+{$BOOLEVAL ON}
+type
+  integer = int64;
+
+
+reference
+
+on apple use pipes instead of temp files
+-ap
+
+semantics
+-Sg  label and goto
+-Sh  ansistrings (not always)
+-Si  allow inline
+-Sx  enable exception keywords
+
+
+code generation checks
+-Ci io check
+-Co overflow
+-Cr range
+-Ct stack
+
+optimizer
+-Os for smaller code
+-Oa=N  alignment = n
+-O1    level 1 optimizations, debuggable
+-O2/3  not worth it i think
+
+paths
+let default paths from fpc.cfg take care of many things
+but for my own units and includes ...
+-FEpath output of executables and units
+-FUpath output of units (overriding -FE)
+-Fupath input units
+-Fipath input includes
+
+
+linking
+-gc check for pointers
+-gl line info unit for backtrace
+-gw3 dwarf
+
+misc
+-vewnhlb gets errors, warnings, notes, hints, file name and path, line numbers
