@@ -49,9 +49,9 @@ LICENSE                -- The usual.
 
 README.txt             -- This document.
 
-Language_Configuration -- Subdirectory with language specific tool
-                          configurations for Neovim, LSPs, Linters,
-			  and Formatters.
+LanguageConfiguration  -- Subdirectory with language specific tool
+                          configurations for editors, LSPs, Linters,
+                          and Formatters.
 
 booking-it.txt         -- I like old text books. Here's how and why I pick
                           and use them, with notes on one particular text
@@ -66,6 +66,9 @@ cmake.txt              -- A quick reference of what works for me with CMake
 csick.txt              -- A cross between a screed and a rant about
                           languages and what works (or doesn't) for me a
                           while back. Nothing is forever.
+
+dprint-cheat.md        -- How to configure dprint for markdown from helix.
+dprint.json
 
 fortran90.org          -- My notes as I approached Modern Fortran. Out of
                           date and wrong pretty much from the get go, but
@@ -83,6 +86,12 @@ retroreading.txt       -- Why and how I approach learning what I already
                           partially know. Some overlap here with the
                           booking-it.txt file.
 
+rg-cheat.md            -- How to ripgrep.
+
 schemes.scm            -- My notes on working with Scheme as I go through
                           several books on Lisp/Scheme programming. It's a
                           different way of seeing things.
+
+hx-cheat.md            -- Helix notes in progress.
+
+lldbref.md             -- a list of common LLDB commands.
